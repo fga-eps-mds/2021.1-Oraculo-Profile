@@ -4,9 +4,6 @@ const { verifyJWT } = require("./utils/JWSfunctions");
 
 const router = express.Router();
 
-router.get("/users", verifyJWT, ProfileController.acess);
-router.post("/users", verifyJWT, ProfileController.create);
-router.put("/users/:id", verifyJWT, ProfileController.update);
-router.delete("/users/:id", verifyJWT, ProfileController.delete);
+router.post("/users:id", verifyJWT, ProfileController.create);
 
 module.exports = router;
