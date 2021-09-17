@@ -31,7 +31,7 @@ services:
     networks:
       - profiles-network
 
-  profiles:
+  profile:
     container_name: oraculo-profiles
     build: .
     restart: always
