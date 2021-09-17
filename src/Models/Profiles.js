@@ -10,6 +10,12 @@ class Profiles extends Model {
         password: {
           type: Sequelize.STRING,
         },
+        permission: {
+          type: Sequelize.INTEGER,
+        },
+        id: {
+          type: Sequelize.INTEGER,
+        },
       },
       {
         sequelize: db,
