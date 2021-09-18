@@ -10,6 +10,7 @@ env.config();
 const { DB_USER, DB_PASS, DB_HOSTNAME, APP_PORT } = process.env;
 
 const app = express();
+app.disable("x-powered-by");
 
 const db = new Sequelize({
   username: `${DB_USER}`,
