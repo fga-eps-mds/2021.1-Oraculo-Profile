@@ -29,7 +29,7 @@ db.authenticate().catch((reason) => {
 Profile.init(db);
 
 app.listen(APP_PORT);
-app.use(cors());
+app.use(cors({origin: 'localhost:8000'}));
 app.use(express.json());
 app.use(routes);
 
