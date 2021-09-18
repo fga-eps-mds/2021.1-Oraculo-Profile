@@ -6,7 +6,7 @@ exports.create = (req, res) => {
     res.status(400).send({
       message: "error users could , all fields are required!",
     });
-    return res.status(200).sen({ message: "profile created with success" });
+    return res.status(200).send({ message: "profile created with success" });
   }
 
   const creatingUsers = {
@@ -23,4 +23,6 @@ exports.create = (req, res) => {
     .catch((err) => {
       return res.status(500).json({ message: "error creating an user" });
     });
+
+    return res;
 };
