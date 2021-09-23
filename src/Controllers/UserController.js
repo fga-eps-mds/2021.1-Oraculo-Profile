@@ -2,68 +2,80 @@ const { application } = require("express");
 const db = require("../Models/User");
 const Users = db.users;
 
-exports.create = async (req, res) => {
-  if (
-    !req.body.password &&
-    !req.body.email &&
-    !req.body.departmentID &&
-    !req.body.level &&
-    !req.body.sectionID
-  ) {
-    res.status(400).send({
-      message: "error users could , all fields are required!",
-    });
-    return res.status(200).send({ message: "user created with success" });
-  }
+async function createUser(req, res) {
+	if (
+		!req.body.password &&
+		!req.body.email &&
+		!req.body.departmentID &&
+		!req.body.level &&
+		!req.body.sectionID
+	) {
+		return res.status(400).send({
+			message: "error users could , all fields are required!",
+		});
+	}
 
-  const creatingUsers = {
-    permission: req.body.permission,
-    password: req.body.password,
-    email: req.body.email,
-    departmentID: req.body.departmentID,
-    level: req.body.level,
-    sectionID: req.body.sectionID,
-  };
+	try {
+		const user = {
+			permission: req.body.permission,
+			password: req.body.password,
+			email: req.body.email,
+			departmentID: req.body.departmentID,
+			level: req.body.level,
+			sectionID: req.body.sectionID,
+		};
 
-  Users.create(creatingUsers)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      return res.status(500).json({ message: "error creating an user" });
-    });
-  return res;
-};
+		let createdUser = Users.create(user)
+			.then((data) => {
+				res.send(data);
+			})
+			.catch((err) => {
+				console.error(`Failed to create user: ${err}`);
+				return res
+					.status(500)
+					.json({ message: "could not insert user into database" });
+			});
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+		return res.status(200).send(createdUser);
+	} catch (error) {
+		console.log(`failed to create user: ${error}`);
+		return res.status(400).json({ error: "could not create user" });
+	}
+}
 
-    if (!(email && password)) {
-      res.status(400).send("All input is required");
-    }
-    const user = await User.findOne({ email });
+async function loginUser(req, res) {
+	try {
+		const { email, password } = req.body;
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user._id, email }, process.env.SECRET, {
-        expiresIn: "1h",
-      });
+		if (!(email && password)) {
+			res.status(400).send("All input is required");
+		}
 
-      user.token = token;
+		const user = await User.findOne({ email });
 
-      res.status(200).json(user);
-    }
-    res.status(400).send("Invalid Credentials");
-  } catch (err) {
-    console.log(err);
-  }
-};
+		if (user && (await bcrypt.compare(password, user.password))) {
+			const token = jwt.sign({ user_id: user._id, email }, process.env.SECRET, {
+				expiresIn: "1h",
+			});
 
-exports.listUser = async () => {
-  list
-    .findAll({ where: { id: id } })
-    .then((todoLists) => {
-      res.render("users", { todoLists });
-    })
-    .catch((err) => console.error(err));
+			user.token = token;
+
+			res.status(200).json(user);
+		}
+
+		res.status(400).send("Invalid Credentials");
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+async function listUsers(req, res) {
+	try {
+	} catch (error) {}
+}
+
+module.exports = {
+	createUser,
+	loginUser,
+	listUsers,
 };
