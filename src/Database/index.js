@@ -2,7 +2,7 @@ const User = require("../Models/User");
 const config = require("./config/database");
 const { Sequelize } = require("sequelize");
 const Department = require("../Models/Department");
-const userLevel = require("../Models/userLevel");
+const userLevel = require("../Models/Level");
 
 async function initializeDatabase() {
 	const db = new Sequelize(config);
