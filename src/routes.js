@@ -4,7 +4,7 @@ const { verifyJWT } = require("./Utils/JWT");
 
 const router = express.Router();
 
-router.post("/users", verifyJWT, UserController.create);
-router.post("/login", verifyJWT, UserController.login);
+router.post("/register", UserController.createUser);
+router.post("/login", verifyJWT, UserController.loginUser);
 
 module.exports = router;
