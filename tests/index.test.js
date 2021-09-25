@@ -1,5 +1,12 @@
-const showMessage = require('../app/index.js');
+const db = require("../src/Database");
 
-test('Successful Message', () => {
-  expect(showMessage("Success!")).toBe("Message: Success!");
+test("Initialize database client", () => {
+	return db.initializeDatabase().then(
+		(ok) => {
+			expect(ok).toBe(0);
+		},
+		(err) => {
+			expect(err).toBe(1);
+		}
+	);
 });
