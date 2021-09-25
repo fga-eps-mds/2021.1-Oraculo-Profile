@@ -25,6 +25,11 @@ class User extends Model {
 			through: "user_levels",
 			as: "levels",
 		});
+		this.belongsToMany(models.Section, {
+			foreignKey: "user_id",
+			through: "user_sections",
+			as: "sections",
+		});
 	}
 }
 
