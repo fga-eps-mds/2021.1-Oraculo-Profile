@@ -21,7 +21,7 @@ async function createUser(req, res) {
 	try {
 		const user = {
 			permission: req.body.permission,
-			password: crypto.createHash("sha256").update(req.body.password).digest("hex"),
+			password: crypto.createHash("sha512").update(req.body.password).digest("hex"),
 			email: req.body.email,
 			departmentID: req.body.departmentID,
 			levelID: req.body.level,
