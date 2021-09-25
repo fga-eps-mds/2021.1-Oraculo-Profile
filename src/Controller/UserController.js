@@ -1,9 +1,9 @@
 const User = require("../Model/User");
-const crypto = require("crypto");
 const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
 const { options } = require("../Model/User");
 const { Section } = require("../Model/Section");
+const { hashPassword } = require("../Utils/hash");
 
 async function createUser(req, res) {
 	if (
@@ -19,9 +19,11 @@ async function createUser(req, res) {
 	}
 
 	try {
+		let rawPassword = req.body.password;
+
 		const user = {
 			permission: req.body.permission,
-			password: crypto.createHash("sha512").update(req.body.password).digest("hex"),
+			password: hashPassword(rawPassword),
 			email: req.body.email,
 			departmentID: req.body.departmentID,
 			levelID: req.body.level,
