@@ -9,28 +9,12 @@ module.exports = {
 				autoIncrement: true,
 				allowNull: false,
 			},
-			permission: {
-				type: Sequelize.INTEGER,
-				allowNull: false,
-			},
 			password: {
 				type: Sequelize.TEXT,
 				allowNull: false,
 			},
 			email: {
 				type: Sequelize.TEXT,
-				allowNull: false,
-			},
-			department_id: {
-				type: Sequelize.INTEGER,
-				allowNull: false,
-			},
-			level: {
-				type: Sequelize.INTEGER,
-				allowNull: false,
-			},
-			section_id: {
-				type: Sequelize.INTEGER,
 				allowNull: false,
 			},
 			created_at: {
