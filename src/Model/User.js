@@ -4,8 +4,8 @@ class User extends Model {
 	static init(db) {
 		super.init(
 			{
-				password: { type: Sequelize.TEXT },
 				email: { type: Sequelize.TEXT },
+				password: { type: Sequelize.TEXT },
 			},
 			{
 				sequelize: db,
@@ -15,8 +15,16 @@ class User extends Model {
 	}
 
 	static associate(models) {
-		User.hasOne(models.Department);
-		User.hasOne(models.Level);
+		this.belongsToMany(models.Department, {
+			foreignKey: "user_id",
+			through: "user_departments",
+			as: "departments",
+		});
+		this.belongsToMany(models.Level, {
+			foreignKey: "user_id",
+			through: "user_levels",
+			as: "levels",
+		});
 	}
 }
 
