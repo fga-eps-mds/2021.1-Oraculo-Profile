@@ -10,10 +10,7 @@ jobs:
                   # Disabling shallow clone is recommended for improving relevancy of reporting
                   fetch-depth: 0
             - name: Run tests
-              uses: actions/setup-node@v1
-              with:
-                  node-version: "14.x"
-            - run: npm install && npm run test
+            - run: docker-compose run profile npm run test
 
             - name: SonarCloud Scan
               uses: sonarsource/sonarcloud-github-action@master
