@@ -14,11 +14,12 @@ class Level extends Model {
 	}
 
 	static associate(models) {
-		this.belongsToMany(models.Level, {
-			through: "level_users",
-			as: "user_levels_association",
+		this.belongsToMany(models.User, {
+			foreignKey: "level_id",
+			through: "user_levels",
+			as: "levels",
 		});
 	}
 }
 
-module.exports = Level;
+module.exports = { Level };
