@@ -15,10 +15,11 @@ class Department extends Model {
 
 	static associate(models) {
 		this.belongsToMany(models.User, {
-			through: "department_users",
-			as: "user_departments_association",
+			foreignKey: "department_id",
+			through: "user_departments",
+			as: "departments",
 		});
 	}
 }
 
-module.exports = Department;
+module.exports = { Department };
