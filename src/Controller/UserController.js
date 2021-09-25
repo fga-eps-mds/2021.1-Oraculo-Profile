@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
 const { options } = require("../Model/User");
+const { Section } = require("../Model/Section");
 
 async function createUser(req, res) {
 	if (
@@ -36,8 +37,9 @@ async function createUser(req, res) {
 			where: { id: user.levelID },
 		});
 
-		if (!department || !level) {
-			return res.status(401).send({ error: "invalid department or level" });
+		const section = await Section.findOne({ where: { id: user.sectionID } });
+		if (!department || !level || !section) {
+			return res.status(401).send({ error: "invalid user information provided" });
 		}
 
 		let newUser = await User.create({
@@ -51,6 +53,7 @@ async function createUser(req, res) {
 
 		await newUser.addDepartment(department);
 		await newUser.addLevel(level);
+		await newUser.addSection(section);
 
 		return res.status(200).send(newUser);
 	} catch (error) {
