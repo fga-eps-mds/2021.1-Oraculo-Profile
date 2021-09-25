@@ -30,6 +30,8 @@ services:
             - "${PGADMIN_PORT}:80"
         networks:
             - profiles-network
+        links:
+            - banco:${DB_HOST}
 
     profile:
         container_name: oraculo-profiles
