@@ -9,7 +9,12 @@ module.exports = {
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
 
-		return queryInterface.createTable("levels", {
+		const userAccessLevels = [
+			{ name: "admin", created_at: new Date(), updated_at: new Date() },
+			{ name: "common", created_at: new Date(), updated_at: new Date() },
+		];
+
+		await queryInterface.createTable("levels", {
 			id: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
@@ -29,6 +34,8 @@ module.exports = {
 				allowNull: false,
 			},
 		});
+
+		return queryInterface.bulkInsert("levels", userAccessLevels);
 	},
 
 	down: async (queryInterface, Sequelize) => {

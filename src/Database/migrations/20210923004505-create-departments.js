@@ -9,7 +9,45 @@ module.exports = {
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
 
-		return queryInterface.createTable("departments", {
+		const departments = [
+			{
+				name: "Gerência de identificação (GI)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Unidade de inteligência (UI)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Gerência adjunta (GA)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Divisão Biométria Criminal (DICRIM)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Divisão de Tecnologia, Pesquisa e Desenvolvimento (DITEC)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Divisão Administrativa (DIADM)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+			{
+				name: "Divisão Biométrica Civil (DICIV)",
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+		];
+
+		await queryInterface.createTable("departments", {
 			id: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
@@ -29,6 +67,8 @@ module.exports = {
 				allowNull: false,
 			},
 		});
+
+		return queryInterface.bulkInsert("departments", departments);
 	},
 
 	down: async (queryInterface, Sequelize) => {
