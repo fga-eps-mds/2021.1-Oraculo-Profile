@@ -8,7 +8,7 @@ const { Section } = require("../Model/Section");
 async function initializeDatabase() {
 	const db = new Sequelize(config);
 
-	let auth = db.authenticate();
+	const auth = db.authenticate();
 
 	return new Promise((resolve, reject) => {
 		auth.then(
