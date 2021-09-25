@@ -1,6 +1,6 @@
 const { application } = require("express");
-const db = require("../Models/User");
-const Users = db.users;
+const User = require("../Models/User");
+const crypto = require("crypto");
 
 async function createUser(req, res) {
 	if (
@@ -18,25 +18,19 @@ async function createUser(req, res) {
 	try {
 		const user = {
 			permission: req.body.permission,
-			password: req.body.password,
+			password: crypto.createHash("sha256").update(req.body.password).digest("hex"),
 			email: req.body.email,
 			departmentID: req.body.departmentID,
 			level: req.body.level,
 			sectionID: req.body.sectionID,
 		};
 
-		let createdUser = Users.create(user)
-			.then((data) => {
-				res.send(data);
-			})
-			.catch((err) => {
-				console.error(`Failed to create user: ${err}`);
-				return res
-					.status(500)
-					.json({ message: "could not insert user into database" });
-			});
+		let newUser = await User.create({ email: user.email, password: user.password });
+		if (!newUser) {
+			return res.status(500).send({ error: "could not insert user" });
+		}
 
-		return res.status(200).send(createdUser);
+		return res.status(200).send(newUser);
 	} catch (error) {
 		console.log(`failed to create user: ${error}`);
 		return res.status(400).json({ error: "could not create user" });
