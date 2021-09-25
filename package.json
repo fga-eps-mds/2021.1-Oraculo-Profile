@@ -18,7 +18,8 @@
 	},
 	"homepage": "https://github.com/fga-eps-mds/2021.1-Oraculo-Profile#readme",
 	"devDependencies": {
-		"jest": "^27.1.1"
+		"jest": "^27.1.1",
+		"jest-sonar-reporter": "^2.0.0"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
