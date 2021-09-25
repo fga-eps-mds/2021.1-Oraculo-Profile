@@ -1,8 +1,8 @@
-const User = require("../Models/User");
+const User = require("../Model/User");
 const config = require("./config/database");
 const { Sequelize } = require("sequelize");
-const Department = require("../Models/Department");
-const userLevel = require("../Models/Level");
+const Department = require("../Model/Department");
+const Level = require("../Model/Level");
 
 async function initializeDatabase() {
 	const db = new Sequelize(config);
@@ -14,11 +14,11 @@ async function initializeDatabase() {
 			() => {
 				User.init(db);
 				Department.init(db);
-				userLevel.init(db);
+				Level.init(db);
 
 				User.associate(db.models);
 				Department.associate(db.models);
-				userLevel.associate(db.models);
+				Level.associate(db.models);
 
 				resolve(0);
 			},

@@ -13,6 +13,6 @@ module.exports = {
 	host: `${DB_HOST}`, //Number.parseInt(`${DB_HOST}`),
 	define: {
 		timestamps: true,
-		underscored: false,
+		underscored: true,
 	},
 };

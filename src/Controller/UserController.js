@@ -1,5 +1,5 @@
 const { application } = require("express");
-const User = require("../Models/User");
+const User = require("../Model/User");
 const crypto = require("crypto");
 
 async function createUser(req, res) {

@@ -4,18 +4,21 @@ class Level extends Model {
 	static init(db) {
 		super.init(
 			{
-				id: { type: Sequelize.INTEGER, primaryKey: true },
 				name: { type: Sequelize.TEXT },
 			},
 			{
 				sequelize: db,
+				tableName: "levels",
 			}
 		);
 	}
 
 	static associate(models) {
-		userLevel.hasOne(models.User);
+		this.belongsToMany(models.Level, {
+			through: "level_users",
+			as: "user_levels_association",
+		});
 	}
 }
 
-module.exports = userLevel;
+module.exports = Level;

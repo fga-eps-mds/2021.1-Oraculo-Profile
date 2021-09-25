@@ -4,17 +4,20 @@ class Department extends Model {
 	static init(db) {
 		super.init(
 			{
-				id: { type: Sequelize.INTEGER, primaryKey: true },
 				name: { type: Sequelize.TEXT },
 			},
 			{
 				sequelize: db,
+				tableName: "departments",
 			}
 		);
 	}
 
 	static associate(models) {
-		Department.hasOne(models.User);
+		this.belongsToMany(models.User, {
+			through: "department_users",
+			as: "user_departments_association",
+		});
 	}
 }
 
