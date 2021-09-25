@@ -1,12 +1,6 @@
-const db = require("../src/Database");
+const app = require("../src");
 
-test("Initialize database client", () => {
-	return db.initializeDatabase().then(
-		(ok) => {
-			expect(ok).toBe(0);
-		},
-		(err) => {
-			expect(err).toBe(1);
-		}
-	);
+test("Test express server app", (done) => {
+	expect(app).toBeDefined();
+	done();
 });
