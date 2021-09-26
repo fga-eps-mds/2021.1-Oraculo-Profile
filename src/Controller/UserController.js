@@ -92,8 +92,17 @@ async function loginUser(req, res) {
   }
 }
 
+async function adminCreateUser(levelID) {
+  if (levelID === 1) {
+    createUser();
+    return res.status(200);
+  } else {
+    res.status(400).send("Only admins can create users");
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
-  listUsers,
+  adminCreateUser,
 };
