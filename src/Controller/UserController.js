@@ -20,7 +20,7 @@ async function createUser(req, res) {
 	}
 
 	try {
-		let rawPassword = req.body.password;
+		const rawPassword = req.body.password;
 
 		const user = {
 			permission: req.body.permission,
@@ -68,8 +68,6 @@ async function createUser(req, res) {
 async function loginUser(req, res) {
 	try {
 		const { email, password } = req.body;
-
-		console.log(`${email}, ${password}`);
 
 		if (!email || !password) {
 			return res.status(400).json({ error: "missing login information" });
