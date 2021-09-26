@@ -8,10 +8,10 @@ const jwt = require("jsonwebtoken");
 
 async function createUser(req, res) {
 	if (
-		!req.body.password &&
-		!req.body.email &&
-		!req.body.departmentID &&
-		!req.body.level &&
+		!req.body.password ||
+		!req.body.email ||
+		!req.body.departmentID ||
+		!req.body.level ||
 		!req.body.sectionID
 	) {
 		return res.status(400).send({

@@ -1,12 +1,30 @@
 const app = require("../src");
 const request = require("supertest");
-const jwt = require("jsonwebtoken");
+const { verifyJWT } = require("../src/Utils/JWT");
 const { initializeDatabase } = require("../src/Database");
+const express = require("express");
+const jwt = require("jsonwebtoken");
 
 describe("Main test", () => {
+	const newRoutes = express.Router();
+	newRoutes.post("/test", verifyJWT);
+	app.use(newRoutes);
+
+	const token = jwt.sign({ name: "Teste", description: "Teste" }, process.env.SECRET, {
+		expiresIn: 240,
+	});
+
 	const user = {
 		email: "useroraculo@email.com",
 		password: "oraculo123",
+		departmentID: 3,
+		level: 2,
+		sectionID: 3,
+	};
+
+	const user1 = {
+		email: "useroraculo1@email.com",
+		password: "oraculo12345",
 		departmentID: 3,
 		level: 2,
 		sectionID: 3,
@@ -38,6 +56,11 @@ describe("Main test", () => {
 		const res = await request(app).post("/register").send(incompleteUser);
 		expect(res.statusCode).toEqual(400);
 		return res;
+	});
+
+	it("POST /register - create a new user", async () => {
+		const res = await request(app).post("/register").send(user1);
+		expect(res.statusCode).toEqual(200);
 	});
 
 	it("POST /login - should login", async () => {
@@ -77,6 +100,16 @@ describe("Main test", () => {
 		const res = await request(app).post("/login").send({});
 		expect(res.statusCode).toBe(400);
 		return;
+	});
+
+	it("POST /test - post without token", async () => {
+		const res = await request(app).post("/test");
+		expect(res.statusCode).toBe(401);
+	});
+
+	it("POST /test - post without token", async () => {
+		const res = await request(app).post("/test").set("x-access-token", token);
+		expect(res.statusCode).toBe(404);
 	});
 });
 
