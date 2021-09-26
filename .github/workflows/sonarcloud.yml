@@ -20,6 +20,7 @@ jobs:
       - run: docker-compose up -d --build
       - run: npm install
       - run: npx sequelize-cli db:migrate --config src/Database/config/config.json
+      - run: docker container rm -f oraculo-profiles
       - run: npx jest --coverage
 
       - name: SonarCloud Scan
