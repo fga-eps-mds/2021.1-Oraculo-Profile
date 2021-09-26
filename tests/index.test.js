@@ -2,6 +2,7 @@ const app = require("../src");
 const request = require("supertest");
 const db = require("../src/Database");
 const { listUsers } = require("../src/Controller/UserController");
+const { describe } = require("../src/Model/User");
 
 const user = {
   email: `${Math.random().toString(36).substr(2, 5)}@gmail.com`,
@@ -38,6 +39,13 @@ describe("Test register user", () => {
     expect(res.body.level).toBe(user.level);
     expect(res.body.sectionID).toBe(user.sectionID);
   });
+});
+
+describe("Test admin create user", () => {
+  it("POST /admin", async () => {
+    const rest = await request(app).post("/admin");
+    expect(res.statusCode).toEqual(200);
+  })
 });
 
 describe("Test database client setup", () => {
