@@ -1,9 +1,10 @@
-const User = require("../Model/User");
+const { User } = require("../Model/User");
 const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
-const { options } = require("../Model/User");
 const { Section } = require("../Model/Section");
 const { hashPassword } = require("../Utils/hash");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 async function createUser(req, res) {
 	if (
@@ -14,7 +15,7 @@ async function createUser(req, res) {
 		!req.body.sectionID
 	) {
 		return res.status(400).send({
-			message: "error users could , all fields are required!",
+			error: "lacks of information to register user",
 		});
 	}
 
@@ -23,7 +24,7 @@ async function createUser(req, res) {
 
 		const user = {
 			permission: req.body.permission,
-			password: hashPassword(rawPassword),
+			password: await hashPassword(rawPassword),
 			email: req.body.email,
 			departmentID: req.body.departmentID,
 			levelID: req.body.level,
@@ -68,25 +69,30 @@ async function loginUser(req, res) {
 	try {
 		const { email, password } = req.body;
 
-		if (!(email && password)) {
-			res.status(400).send("All input is required");
+		console.log(`${email}, ${password}`);
+
+		if (!email || !password) {
+			return res.status(400).json({ error: "missing login information" });
 		}
 
-		const user = await User.findOne({ email });
+		const user = await User.findOne({ where: { email: email } });
+
+		if (user == null) {
+			return res.status(401).json({ error: "invalid email or password" });
+		}
 
 		if (user && (await bcrypt.compare(password, user.password))) {
-			const token = jwt.sign({ user_id: user._id, email }, process.env.SECRET, {
+			const token = jwt.sign({ user_id: user.id, email }, process.env.SECRET, {
 				expiresIn: "1h",
 			});
 
-			user.token = token;
-
-			res.status(200).json(user);
+			return res.status(200).json({ user, token });
 		}
 
-		res.status(400).send("Invalid Credentials");
+		return res.status(401).json({ error: "invalid credentials" });
 	} catch (err) {
-		console.log(err);
+		console.error(`could not perform login: ${err}`);
+		return res.status(500).json({ error: "could not login user" });
 	}
 }
 
