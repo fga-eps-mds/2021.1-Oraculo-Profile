@@ -1,6 +1,5 @@
 const app = require("../src");
 const request = require("supertest");
-const db = require("../src/Database");
 
 const user = {
 	email: `${Math.random().toString(36).substr(2, 5)}@gmail.com`,
@@ -28,12 +27,5 @@ describe("Test register user", () => {
 		const res = await request(app).post("/register");
 		expect(res.statusCode).toEqual(400);
 		expect(res.body.message).toEqual("error users could , all fields are required!");
-	});
-});
-
-describe("Test database client setup", () => {
-	it("Should start database client", async () => {
-		const data = await db.initializeDatabase();
-		expect(data).toEqual(0);
 	});
 });
