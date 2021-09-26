@@ -30,6 +30,16 @@ describe("Main test", () => {
 		return res;
 	});
 
+	it("POST /register - without all needed fields", async () => {
+		const incompleteUser = {
+			email: "tester@email.com",
+		};
+
+		const res = await request(app).post("/register").send(incompleteUser);
+		expect(res.statusCode).toEqual(400);
+		return res;
+	});
+
 	it("POST /login - should login", async () => {
 		const res = await request(app)
 			.post("/login")
@@ -39,7 +49,7 @@ describe("Main test", () => {
 		return res;
 	});
 
-	it("POST /login - should not login", async () => {
+	it("POST /login - inexistent user", async () => {
 		const res = await request(app)
 			.post("/login")
 			.send({ email: "user@gmail.com", password: "12345" });
@@ -55,6 +65,18 @@ describe("Main test", () => {
 
 		expect(res.statusCode).toBe(401);
 		return res;
+	});
+
+	it("POST /login - without password field", async () => {
+		const res = await request(app).post("/login").send({ email: user.email });
+		expect(res.statusCode).toBe(400);
+		return;
+	});
+
+	it("POST /login - invalid field type", async () => {
+		const res = await request(app).post("/login").send({});
+		expect(res.statusCode).toBe(400);
+		return;
 	});
 });
 
