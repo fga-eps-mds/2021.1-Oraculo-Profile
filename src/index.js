@@ -16,17 +16,17 @@ app.use(express.json());
 app.use(routes);
 
 if (require.main === module) {
-  app.listen(APP_PORT);
-  console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
+	app.listen(APP_PORT);
+	console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
 
-  initializeDatabase().then(
-    () => {
-      console.info(`connected to database`);
-    },
-    () => {
-      console.error(`could not connect to database`);
-    }
-  );
+	initializeDatabase().then(
+		() => {
+			console.info(`connected to database`);
+		},
+		() => {
+			console.error(`could not connect to database`);
+		}
+	);
 }
 
 module.exports = app;
