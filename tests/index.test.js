@@ -1,48 +1,85 @@
 const app = require("../src");
 const request = require("supertest");
-const db = require("../src/Database");
-const { listUsers } = require("../src/Controller/UserController");
+const jwt = require("jsonwebtoken");
+const { initializeDatabase } = require("../src/Database");
 
-const user = {
-  email: `${Math.random().toString(36).substr(2, 5)}@gmail.com`,
-  password: "123456",
-  department: 3,
-  level: 4,
-  sectionID: 2,
-};
+describe("Main test", () => {
+	const user = {
+		email: "useroraculo@email.com",
+		password: "oraculo123",
+		departmentID: 3,
+		level: 2,
+		sectionID: 3,
+	};
 
-test("Test express server app", (done) => {
-  expect(app).toBeDefined();
-  done();
+	beforeAll(async () => {
+		await initializeDatabase();
+		await request(app).post("/register").send(user);
+		return;
+	});
+
+	it("Test express server app", (done) => {
+		expect(app).toBeDefined();
+		done();
+		return;
+	});
+
+	it("POST /register - should not create because user already exists", async () => {
+		const res = await request(app).post("/register").send(user);
+		expect(res.statusCode).toEqual(400);
+		return res;
+	});
+
+	it("POST /register - without all needed fields", async () => {
+		const incompleteUser = {
+			email: "tester@email.com",
+		};
+
+		const res = await request(app).post("/register").send(incompleteUser);
+		expect(res.statusCode).toEqual(400);
+		return res;
+	});
+
+	it("POST /login - should login", async () => {
+		const res = await request(app)
+			.post("/login")
+			.send({ email: user.email, password: user.password });
+
+		expect(res.statusCode).toBe(200);
+		return res;
+	});
+
+	it("POST /login - inexistent user", async () => {
+		const res = await request(app)
+			.post("/login")
+			.send({ email: "user@gmail.com", password: "12345" });
+
+		expect(res.statusCode).toBe(401);
+		return res;
+	});
+
+	it("POST /login - should not login (invalid credentials)", async () => {
+		const res = await request(app)
+			.post("/login")
+			.send({ email: user.email, password: "wrongpassword" });
+
+		expect(res.statusCode).toBe(401);
+		return res;
+	});
+
+	it("POST /login - without password field", async () => {
+		const res = await request(app).post("/login").send({ email: user.email });
+		expect(res.statusCode).toBe(400);
+		return;
+	});
+
+	it("POST /login - invalid field type", async () => {
+		const res = await request(app).post("/login").send({});
+		expect(res.statusCode).toBe(400);
+		return;
+	});
 });
 
-test("find 1 users", async () => {
-  const result = await listUsers.findAll(1);
-  expect(result.length).toEqual(1);
-});
-
-describe("Test login route", () => {
-  it("POST /login", async () => {
-    const res = await request(app).post("/login");
-    expect(res.statusCode).toEqual(401);
-  });
-});
-
-describe("Test register user", () => {
-  it("POST /register", async () => {
-    const res = await request(app).post("/register");
-    expect(res.statusCode).toEqual(200);
-    expect(res.body.email).toBe(user.email);
-    expect(res.body.password).toBe(user.password);
-    expect(res.body.department).toBe(user.department);
-    expect(res.body.level).toBe(user.level);
-    expect(res.body.sectionID).toBe(user.sectionID);
-  });
-});
-
-describe("Test database client setup", () => {
-  it("Should start database client", async () => {
-    const data = await db.initializeDatabase();
-    expect(data).toEqual(0);
-  });
+afterAll((done) => {
+	done();
 });
