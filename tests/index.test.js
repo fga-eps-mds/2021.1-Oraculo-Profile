@@ -24,7 +24,7 @@ describe("Main test", () => {
 
 	it("Test register route", async () => {
 		const res = await request(app).post("/register").send(user);
-		expect(res.statusCode).toEqual(200);
+		expect(res.statusCode).toEqual(401);
 		return;
 	});
 
