@@ -30,6 +30,14 @@ describe("Main test", () => {
 		sectionID: 3,
 	};
 
+	const adminUser = {
+		email: "admin@email.com",
+		password: "admin1234",
+		departmentID: 1,
+		level: 1,
+		sectionID: 2,
+	};
+
 	beforeAll(async () => {
 		await initializeDatabase();
 		await request(app).post("/register").send(user);
@@ -60,6 +68,11 @@ describe("Main test", () => {
 
 	it("POST /register - create a new user", async () => {
 		const res = await request(app).post("/register").send(user1);
+		expect(res.statusCode).toEqual(200);
+	});
+
+	it("POST /register - create admin user", async () => {
+		const res = await request(app).post("/register").send(adminUser);
 		expect(res.statusCode).toEqual(200);
 	});
 
@@ -107,9 +120,54 @@ describe("Main test", () => {
 		expect(res.statusCode).toBe(401);
 	});
 
-	it("POST /test - post without token", async () => {
+	it("POST /test - post with token", async () => {
 		const res = await request(app).post("/test").set("x-access-token", token);
 		expect(res.statusCode).toBe(404);
+	});
+
+	it("POST /users/all - should not retrieve users list", async () => {
+		const res = await request(app).post("/users/all");
+		expect(res.statusCode).toEqual(401);
+	});
+
+	it("POST /users/all - post without valid token", async () => {
+		const res = await request(app).post("/users/all").set("x-access-token", "invalid");
+		expect(res.statusCode).toEqual(500);
+	});
+
+	it("POST /users/all - post without token", async () => {
+		const res = await request(app).post("/users/all");
+		expect(res.statusCode).toEqual(401);
+	});
+
+	it("POST /users/all - should retrieve users list", async () => {
+		// login first
+		const res = await request(app).post("/login").send({
+			email: adminUser.email,
+			password: adminUser.password,
+		});
+
+		// list users
+		const res1 = await request(app)
+			.post("/users/all")
+			.set("x-access-token", res.body.token)
+			.send();
+
+		expect(res1.statusCode).toEqual(200);
+	});
+
+	it("POST /users/all - test with a less privileged user", async () => {
+		const res = await request(app).post("/login").send({
+			email: user.email,
+			password: user.password,
+		});
+
+		const res1 = await request(app)
+			.post("/users/all")
+			.set("x-access-token", res.body.token)
+			.send();
+
+		expect(res1.statusCode).toEqual(401);
 	});
 });
 
