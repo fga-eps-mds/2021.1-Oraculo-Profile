@@ -11,6 +11,19 @@ const privilegeTypes = {
 	common: 2,
 };
 
+async function findUserLevelByID(req) {
+	const user = await User.findByPk(req.decoded.user_id, {
+		include: {
+			association: "levels",
+		},
+		where: { email: req.decoded.email },
+	});
+
+	const level = await user.levels[0];
+
+	return level;
+}
+
 async function createUser(req, res) {
 	if (
 		!req.body.password ||
@@ -27,7 +40,18 @@ async function createUser(req, res) {
 	try {
 		const rawPassword = req.body.password;
 
-		const user = {
+		// check for user permission
+		const requesterLevel = await findUserLevelByID(req);
+
+		console.log(requesterLevel);
+
+		if (requesterLevel.id != privilegeTypes.admin) {
+			return res
+				.status(401)
+				.json({ error: "you do not have privileges to create a user" });
+		}
+
+		const newUserInfo = {
 			permission: req.body.permission,
 			password: await hashPassword(rawPassword),
 			email: req.body.email,
@@ -38,21 +62,21 @@ async function createUser(req, res) {
 
 		// Search for user department and level
 		const department = await Department.findOne({
-			where: { id: user.departmentID },
+			where: { id: newUserInfo.departmentID },
 		});
 
 		const level = await Level.findOne({
-			where: { id: user.levelID },
+			where: { id: newUserInfo.levelID },
 		});
 
-		const section = await Section.findOne({ where: { id: user.sectionID } });
+		const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
 		if (!department || !level || !section) {
 			return res.status(401).send({ error: "invalid user information provided" });
 		}
 
 		const newUser = await User.create({
-			email: user.email,
-			password: user.password,
+			email: newUserInfo.email,
+			password: newUserInfo.password,
 		});
 
 		if (!newUser) {
@@ -65,8 +89,8 @@ async function createUser(req, res) {
 
 		return res.status(200).send(newUser);
 	} catch (error) {
-		console.log(`failed to create user: ${error}`);
-		return res.status(400).json({ error: "could not create user" });
+		console.error(`failed to create user: ${error}`);
+		return res.status(500).json({ error: "internal error during user register" });
 	}
 }
 
@@ -123,15 +147,6 @@ async function getUsersList(req, res) {
 	}
 
 	return res.status(401).json({ error: "you don't have permissions to list all users" });
-}
-
-async function adminCreateUser(levelID) {
-  if (levelID === 1) {
-    createUser();
-    return res.status(200);
-  } else {
-    res.status(400).send("Only admins can create users");
-  }
 }
 
 module.exports = {
