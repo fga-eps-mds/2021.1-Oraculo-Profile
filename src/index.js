@@ -3,6 +3,7 @@ const cors = require("cors");
 const routes = require("./routes");
 const env = require("dotenv");
 const { initializeDatabase } = require("./Database");
+const morgan = require("morgan");
 
 env.config();
 
@@ -13,6 +14,7 @@ app.disable("x-powered-by");
 
 app.use(cors({ origin: "localhost:8000" }));
 app.use(express.json());
+app.use(morgan("short"));
 app.use(routes);
 
 app.listen(APP_PORT);

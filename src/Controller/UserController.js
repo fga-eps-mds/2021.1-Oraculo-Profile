@@ -6,6 +6,11 @@ const { hashPassword } = require("../Utils/hash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const privilegeTypes = {
+	admin: 1,
+	common: 2,
+};
+
 async function createUser(req, res) {
 	if (
 		!req.body.password ||
@@ -84,7 +89,7 @@ async function loginUser(req, res) {
 				expiresIn: "1h",
 			});
 
-			return res.status(200).json({ user, token });
+			return res.status(200).json({ auth: true, token });
 		}
 
 		return res.status(401).json({ error: "invalid credentials" });
@@ -94,7 +99,34 @@ async function loginUser(req, res) {
 	}
 }
 
+async function getUsersList(req, res) {
+	const user = await User.findByPk(req.decoded.user_id, {
+		include: {
+			association: "levels",
+		},
+		where: { email: req.decoded.email },
+	});
+
+	if (!user) {
+		return res.status(401).json({ error: "invalid user" });
+	}
+
+	const level = user.levels[0];
+
+	if (level.id === privilegeTypes.admin) {
+		const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
+		if (!allUsers) {
+			throw new Error("could not find all users");
+		}
+
+		return res.status(200).json(allUsers);
+	}
+
+	return res.status(401).json({ error: "you don't have permissions to list all users" });
+}
+
 module.exports = {
 	createUser,
 	loginUser,
+	getUsersList,
 };
