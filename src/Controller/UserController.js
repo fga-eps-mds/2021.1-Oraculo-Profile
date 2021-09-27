@@ -100,36 +100,29 @@ async function loginUser(req, res) {
 }
 
 async function getUsersList(req, res) {
-	try {
-		const user = await User.findByPk(req.decoded.user_id, {
-			include: {
-				association: "levels",
-			},
-			where: { email: req.decoded.email },
-		});
+	const user = await User.findByPk(req.decoded.user_id, {
+		include: {
+			association: "levels",
+		},
+		where: { email: req.decoded.email },
+	});
 
-		if (!user) {
-			return res.status(401).json({ error: "invalid user" });
-		}
-
-		const level = user.levels[0];
-
-		if (level.id == privilegeTypes.admin) {
-			const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
-			if (!allUsers) {
-				throw "could not find all users";
-			}
-
-			return res.status(200).json(allUsers);
-		}
-
-		return res
-			.status(401)
-			.json({ error: "you don't have permissions to list all users" });
-	} catch (err) {
-		console.log(`server error: ${err}`);
-		return res.status(500).json({ error: "could not get users list" });
+	if (!user) {
+		return res.status(401).json({ error: "invalid user" });
 	}
+
+	const level = user.levels[0];
+
+	if (level.id === privilegeTypes.admin) {
+		const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
+		if (!allUsers) {
+			throw new Error("could not find all users");
+		}
+
+		return res.status(200).json(allUsers);
+	}
+
+	return res.status(401).json({ error: "you don't have permissions to list all users" });
 }
 
 module.exports = {
