@@ -14,6 +14,14 @@ describe("Main test", () => {
 		expiresIn: 240,
 	});
 
+	const userInvalidInformation = {
+		email: "blabla@hotmail.com",
+		password: "password",
+		departmentID: -1,
+		level: 100,
+		sectionID: 3,
+	};
+
 	const user = {
 		email: "useroraculo@email.com",
 		password: "oraculo123",
@@ -48,6 +56,11 @@ describe("Main test", () => {
 		expect(app).toBeDefined();
 		done();
 		return;
+	});
+
+	it("POST /register - create user with a invalid department", async () => {
+		const res = await request(app).post("/register").send(userInvalidInformation);
+		expect(res.statusCode).toEqual(401);
 	});
 
 	it("POST /register - should not create because user already exists", async () => {
@@ -168,6 +181,23 @@ describe("Main test", () => {
 			.send();
 
 		expect(res1.statusCode).toEqual(401);
+	});
+
+	it("POST /users/all - test with invalid decoded information", async () => {
+		const res = await request(app).post("/login").send({
+			email: user.email,
+			password: user.password,
+		});
+
+		console.log(res.body);
+		expect(res.statusCode).toEqual(200);
+
+		const res1 = await request(app)
+			.post("/users/all")
+			.set("x-access-token", "my_invalid_token_123")
+			.send();
+
+		expect(res1.statusCode).toEqual(500);
 	});
 });
 
