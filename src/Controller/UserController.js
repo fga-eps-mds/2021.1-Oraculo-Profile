@@ -43,8 +43,6 @@ async function createUser(req, res) {
 		// check for user permission
 		const requesterLevel = await findUserLevelByID(req);
 
-		console.log(requesterLevel);
-
 		if (requesterLevel.id != privilegeTypes.admin) {
 			return res
 				.status(401)
