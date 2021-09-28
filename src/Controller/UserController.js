@@ -68,7 +68,7 @@ async function createUser(req, res) {
 
         const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
         if (!department || !level || !section) {
-            return res.status(401).send({ error: "invalid user information provided" });
+            return res.status(400).send({ error: "invalid user information provided" });
         }
 
         const newUser = await User.create({
