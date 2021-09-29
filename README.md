@@ -61,7 +61,7 @@ Suba o container com o comando:
 docker-compose up
 ```
 
-A API estará rodando na [porta 8000](http://localhost:3000).
+A API estará rodando na [porta 8000](http://localhost:8000).
 
 ## Rotas
 
