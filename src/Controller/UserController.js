@@ -86,7 +86,6 @@ async function createUser(req, res) {
 
         return res.status(200).send(newUser);
     } catch (error) {
-        console.error(`failed to create user: ${error}`);
         return res.status(500).json({ error: "internal error during user register" });
     }
 }
@@ -101,7 +100,7 @@ async function loginUser(req, res) {
 
         const user = await User.findOne({ where: { email: email } });
 
-        if (user == null) {
+        if (!user) {
             return res.status(401).json({ error: "invalid email or password" });
         }
 
@@ -116,7 +115,7 @@ async function loginUser(req, res) {
         return res.status(401).json({ error: "invalid credentials" });
     } catch (err) {
         console.error(`could not perform login: ${err}`);
-        return res.status(500).json({ error: "could not login user" });
+        return res.status(500).json({ error: `could not login user: ${err}` });
     }
 }
 
@@ -128,18 +127,10 @@ async function getUsersList(req, res) {
         where: { email: req.decoded.email },
     });
 
-    if (!user) {
-        return res.status(401).json({ error: "invalid user" });
-    }
-
     const level = user.levels[0];
 
     if (level.id === privilegeTypes.admin) {
         const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
-        if (!allUsers) {
-            throw new Error("could not find all users");
-        }
-
         return res.status(200).json(allUsers);
     }
 
