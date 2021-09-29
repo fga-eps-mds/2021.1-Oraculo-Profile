@@ -11,6 +11,19 @@ const privilegeTypes = {
     common: 2,
 };
 
+async function findUserLevelByID(req) {
+    const user = await User.findByPk(req.decoded.user_id, {
+        include: {
+            association: "levels",
+        },
+        where: { email: req.decoded.email },
+    });
+
+    const level = await user.levels[0];
+
+    return level;
+}
+
 async function createUser(req, res) {
     if (
         !req.body.password ||
@@ -27,8 +40,16 @@ async function createUser(req, res) {
     try {
         const rawPassword = req.body.password;
 
-        const user = {
-            permission: req.body.permission,
+        // check for user permission
+        const requesterLevel = await findUserLevelByID(req);
+
+        if (requesterLevel.id != privilegeTypes.admin) {
+            return res
+                .status(401)
+                .json({ error: "you do not have privileges to create a user" });
+        }
+
+        const newUserInfo = {
             password: await hashPassword(rawPassword),
             email: req.body.email,
             departmentID: req.body.departmentID,
@@ -38,21 +59,21 @@ async function createUser(req, res) {
 
         // Search for user department and level
         const department = await Department.findOne({
-            where: { id: user.departmentID },
+            where: { id: newUserInfo.departmentID },
         });
 
         const level = await Level.findOne({
-            where: { id: user.levelID },
+            where: { id: newUserInfo.levelID },
         });
 
-        const section = await Section.findOne({ where: { id: user.sectionID } });
+        const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
         if (!department || !level || !section) {
-            return res.status(401).send({ error: "invalid user information provided" });
+            return res.status(400).send({ error: "invalid user information provided" });
         }
 
         const newUser = await User.create({
-            email: user.email,
-            password: user.password,
+            email: newUserInfo.email,
+            password: newUserInfo.password,
         });
 
         if (!newUser) {
@@ -65,8 +86,7 @@ async function createUser(req, res) {
 
         return res.status(200).send(newUser);
     } catch (error) {
-        console.log(`failed to create user: ${error}`);
-        return res.status(400).json({ error: "could not create user" });
+        return res.status(500).json({ error: "internal error during user register" });
     }
 }
 
@@ -80,7 +100,7 @@ async function loginUser(req, res) {
 
         const user = await User.findOne({ where: { email: email } });
 
-        if (user == null) {
+        if (!user) {
             return res.status(401).json({ error: "invalid email or password" });
         }
 
@@ -95,7 +115,7 @@ async function loginUser(req, res) {
         return res.status(401).json({ error: "invalid credentials" });
     } catch (err) {
         console.error(`could not perform login: ${err}`);
-        return res.status(500).json({ error: "could not login user" });
+        return res.status(500).json({ error: `could not login user: ${err}` });
     }
 }
 
@@ -107,18 +127,10 @@ async function getUsersList(req, res) {
         where: { email: req.decoded.email },
     });
 
-    if (!user) {
-        return res.status(401).json({ error: "invalid user" });
-    }
-
     const level = user.levels[0];
 
     if (level.id === privilegeTypes.admin) {
         const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
-        if (!allUsers) {
-            throw new Error("could not find all users");
-        }
-
         return res.status(200).json(allUsers);
     }
 
@@ -127,25 +139,8 @@ async function getUsersList(req, res) {
         .json({ error: "you don't have permissions to list all users" });
 }
 
-async function getAccessLevel(req, res) {
-    const user = await User.findByPk(req.decoded.user_id, {
-        include: {
-            association: "levels",
-        },
-        where: { email: req.decoded.email },
-    });
-
-    if (!user) {
-        return res.status(401).json({ error: "invalid user" });
-    }
-
-    const accessLevel = user.levels[0];
-    return res.status(200).json({ accessLevel });
-}
-
 module.exports = {
     createUser,
     loginUser,
     getUsersList,
-    getAccessLevel,
 };

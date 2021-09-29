@@ -21,12 +21,12 @@ app.listen(APP_PORT);
 console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
 
 initializeDatabase().then(
-	() => {
-		console.info(`connected to database`);
-	},
-	() => {
-		console.error(`could not connect to database`);
-	}
+    () => {
+        console.info(`connected to database`);
+    },
+    () => {
+        console.error(`could not connect to database`);
+    }
 );
 
 module.exports = app;

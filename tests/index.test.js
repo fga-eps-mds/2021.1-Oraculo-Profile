@@ -1,206 +1,210 @@
 const app = require("../src");
 const request = require("supertest");
-const { verifyJWT } = require("../src/Utils/JWT");
 const { initializeDatabase } = require("../src/Database");
-const express = require("express");
-const jwt = require("jsonwebtoken");
+
+const adminUser = {
+    email: "admin@email.com",
+    password: "admin1234",
+    departmentID: 1,
+    level: 1,
+    sectionID: 2,
+};
+
+const userInvalidInformation = {
+    email: "blabla@hotmail.com",
+    password: "password",
+    departmentID: -1,
+    level: 100,
+    sectionID: 3,
+};
+
+const user = {
+    email: "useroraculo@email.com",
+    password: "oraculo123",
+    departmentID: 3,
+    level: 2,
+    sectionID: 3,
+};
+
+const user1 = {
+    email: "useroraculo1@email.com",
+    password: "oraculo12345",
+    departmentID: 3,
+    level: 2,
+    sectionID: 3,
+};
+
+const anotherAdmin = {
+    email: "anotheradmin@gmail.com",
+    password: "admin1234",
+    departmentID: 4,
+    level: 1,
+    sectionID: 1,
+};
 
 describe("Main test", () => {
-	const newRoutes = express.Router();
-	newRoutes.post("/test", verifyJWT);
-	app.use(newRoutes);
+    let adminToken = "";
 
-	const token = jwt.sign({ name: "Teste", description: "Teste" }, process.env.SECRET, {
-		expiresIn: 240,
-	});
+    beforeAll(async () => {
+        await initializeDatabase();
+        const res = await request(app)
+            .post("/login")
+            .send({ email: adminUser.email, password: adminUser.password });
 
-	const userInvalidInformation = {
-		email: "blabla@hotmail.com",
-		password: "password",
-		departmentID: -1,
-		level: 100,
-		sectionID: 3,
-	};
+        expect(res.statusCode).toBe(200);
+        adminToken = res.body.token;
+        expect(adminToken).toBeDefined();
+    });
 
-	const user = {
-		email: "useroraculo@email.com",
-		password: "oraculo123",
-		departmentID: 3,
-		level: 2,
-		sectionID: 3,
-	};
+    it("Test if we have a token", (done) => {
+        expect(adminToken).toBeDefined();
+        done();
+    });
 
-	const user1 = {
-		email: "useroraculo1@email.com",
-		password: "oraculo12345",
-		departmentID: 3,
-		level: 2,
-		sectionID: 3,
-	};
+    it("Test express server app", (done) => {
+        expect(app).toBeDefined();
+        done();
+    });
 
-	const adminUser = {
-		email: "admin@email.com",
-		password: "admin1234",
-		departmentID: 1,
-		level: 1,
-		sectionID: 2,
-	};
+    it("POST /register - should create a user", async () => {
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(user);
 
-	beforeAll(async () => {
-		await initializeDatabase();
-		await request(app).post("/register").send(user);
-		return;
-	});
+        expect(res.statusCode).toBe(200);
+    });
 
-	it("Test express server app", (done) => {
-		expect(app).toBeDefined();
-		done();
-		return;
-	});
+    it("POST /register - shoud not create invalid user", async () => {
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(userInvalidInformation);
+        expect(res.statusCode).toEqual(400);
+    });
 
-	it("POST /register - create user with a invalid department", async () => {
-		const res = await request(app).post("/register").send(userInvalidInformation);
-		expect(res.statusCode).toEqual(401);
-	});
+    it("POST /register - should not create because user already exists", async () => {
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(user);
 
-	it("POST /register - should not create because user already exists", async () => {
-		const res = await request(app).post("/register").send(user);
-		expect(res.statusCode).toEqual(400);
-		return res;
-	});
+        expect(res.statusCode).toEqual(500);
+    });
 
-	it("POST /register - without all needed fields", async () => {
-		const incompleteUser = {
-			email: "tester@email.com",
-		};
+    it("POST /register - should not create user because doesn't have all needed fields", async () => {
+        const incompleteUser = {
+            email: "tester@email.com",
+        };
 
-		const res = await request(app).post("/register").send(incompleteUser);
-		expect(res.statusCode).toEqual(400);
-		return res;
-	});
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(incompleteUser);
 
-	it("POST /register - create a new user", async () => {
-		const res = await request(app).post("/register").send(user1);
-		expect(res.statusCode).toEqual(200);
-	});
+        expect(res.statusCode).toEqual(400);
+    });
 
-	it("POST /register - create admin user", async () => {
-		const res = await request(app).post("/register").send(adminUser);
-		expect(res.statusCode).toEqual(200);
-	});
+    it("POST /register - should create a new user", async () => {
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(user1);
+        expect(res.statusCode).toEqual(200);
+    });
 
-	it("POST /login - should login", async () => {
-		const res = await request(app)
-			.post("/login")
-			.send({ email: user.email, password: user.password });
+    it("POST /register - should create another admin user", async () => {
+        const res = await request(app)
+            .post("/register")
+            .set("x-access-token", adminToken)
+            .send(anotherAdmin);
+        expect(res.statusCode).toEqual(200);
+    });
 
-		expect(res.statusCode).toBe(200);
-		return res;
-	});
+    it("POST /login - should login", async () => {
+        const res = await request(app)
+            .post("/login")
+            .send({ email: user1.email, password: user1.password });
 
-	it("POST /login - inexistent user", async () => {
-		const res = await request(app)
-			.post("/login")
-			.send({ email: "user@gmail.com", password: "12345" });
+        expect(res.statusCode).toBe(200);
+    });
 
-		expect(res.statusCode).toBe(401);
-		return res;
-	});
+    it("POST /login - inexistent user", async () => {
+        const res = await request(app)
+            .post("/login")
+            .send({ email: "user@gmail.com", password: "12345" });
 
-	it("POST /login - should not login (invalid credentials)", async () => {
-		const res = await request(app)
-			.post("/login")
-			.send({ email: user.email, password: "wrongpassword" });
+        expect(res.statusCode).toBe(401);
+    });
 
-		expect(res.statusCode).toBe(401);
-		return res;
-	});
+    it("POST /login - should not login (invalid credentials)", async () => {
+        const res = await request(app)
+            .post("/login")
+            .send({ email: user1.email, password: "wrongpassword" });
 
-	it("POST /login - without password field", async () => {
-		const res = await request(app).post("/login").send({ email: user.email });
-		expect(res.statusCode).toBe(400);
-		return;
-	});
+        expect(res.statusCode).toBe(401);
+    });
 
-	it("POST /login - invalid field type", async () => {
-		const res = await request(app).post("/login").send({});
-		expect(res.statusCode).toBe(400);
-		return;
-	});
+    it("POST /login - without password field", async () => {
+        const res = await request(app).post("/login").send({ email: user.email });
+        expect(res.statusCode).toBe(400);
+        return;
+    });
 
-	it("POST /test - post without token", async () => {
-		const res = await request(app).post("/test");
-		expect(res.statusCode).toBe(401);
-	});
+    it("POST /login - invalid field type", async () => {
+        const res = await request(app).post("/login").send({});
+        expect(res.statusCode).toBe(400);
+        return;
+    });
 
-	it("POST /test - post with token", async () => {
-		const res = await request(app).post("/test").set("x-access-token", token);
-		expect(res.statusCode).toBe(404);
-	});
+    it("POST /users/all - should not retrieve users list (no admin token)", async () => {
+        const res = await request(app).post("/users/all");
+        expect(res.statusCode).toEqual(401);
+    });
 
-	it("POST /users/all - should not retrieve users list", async () => {
-		const res = await request(app).post("/users/all");
-		expect(res.statusCode).toEqual(401);
-	});
+    it("POST /users/all - post without valid token", async () => {
+        const res = await request(app)
+            .post("/users/all")
+            .set("x-access-token", "invalid");
+        expect(res.statusCode).toEqual(500);
+    });
 
-	it("POST /users/all - post without valid token", async () => {
-		const res = await request(app).post("/users/all").set("x-access-token", "invalid");
-		expect(res.statusCode).toEqual(500);
-	});
+    it("POST /users/all - should retrieve users list", async () => {
+        // list users
+        const res = await request(app)
+            .post("/users/all")
+            .set("x-access-token", adminToken)
+            .send();
 
-	it("POST /users/all - post without token", async () => {
-		const res = await request(app).post("/users/all");
-		expect(res.statusCode).toEqual(401);
-	});
+        expect(res.statusCode).toEqual(200);
+    });
 
-	it("POST /users/all - should retrieve users list", async () => {
-		// login first
-		const res = await request(app).post("/login").send({
-			email: adminUser.email,
-			password: adminUser.password,
-		});
+    it("POST /users/all - should not list users (more privileges needed)", async () => {
+        const res = await request(app).post("/login").send({
+            email: user.email,
+            password: user.password,
+        });
 
-		// list users
-		const res1 = await request(app)
-			.post("/users/all")
-			.set("x-access-token", res.body.token)
-			.send();
+        expect(res.statusCode).toBe(200);
 
-		expect(res1.statusCode).toEqual(200);
-	});
+        const res1 = await request(app)
+            .post("/users/all")
+            .set("x-access-token", res.body.token)
+            .send();
 
-	it("POST /users/all - test with a less privileged user", async () => {
-		const res = await request(app).post("/login").send({
-			email: user.email,
-			password: user.password,
-		});
+        expect(res1.statusCode).toEqual(401);
+    });
 
-		const res1 = await request(app)
-			.post("/users/all")
-			.set("x-access-token", res.body.token)
-			.send();
+    it("POST /users/all - should not list users (invalid token)", async () => {
+        const res1 = await request(app)
+            .post("/users/all")
+            .set("x-access-token", "my_invalid_token_123")
+            .send();
 
-		expect(res1.statusCode).toEqual(401);
-	});
-
-	it("POST /users/all - test with invalid decoded information", async () => {
-		const res = await request(app).post("/login").send({
-			email: user.email,
-			password: user.password,
-		});
-
-		console.log(res.body);
-		expect(res.statusCode).toEqual(200);
-
-		const res1 = await request(app)
-			.post("/users/all")
-			.set("x-access-token", "my_invalid_token_123")
-			.send();
-
-		expect(res1.statusCode).toEqual(500);
-	});
+        expect(res1.statusCode).toEqual(500);
+    });
 });
 
 afterAll((done) => {
-	done();
+    done();
 });
