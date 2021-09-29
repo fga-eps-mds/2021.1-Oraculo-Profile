@@ -203,6 +203,14 @@ describe("Main test", () => {
 
         expect(res1.statusCode).toEqual(500);
     });
+
+    it("POST /user/access-level - should return user access level", async () => {
+        const res = await request(app)
+            .post("/user/access-level")
+            .set("x-access-token", adminToken)
+            .send();
+        expect(res.statusCode).toBe(200);
+    });
 });
 
 afterAll((done) => {
