@@ -139,8 +139,18 @@ async function getUsersList(req, res) {
         .json({ error: "you don't have permissions to list all users" });
 }
 
+async function getAccessLevel(req, res) {
+    try {
+        const level = await findUserLevelByID(req);
+        return res.status(200).json(level);
+    } catch (err) {
+        return res.status(500).json({ error: "internal server error" });
+    }
+}
+
 module.exports = {
     createUser,
     loginUser,
     getUsersList,
+    getAccessLevel,
 };
