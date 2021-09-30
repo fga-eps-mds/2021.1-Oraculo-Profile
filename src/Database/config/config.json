@@ -1,11 +1,11 @@
 {
   "development": {
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "postgres://fapklqlermcvhy:d00fe4706f183b8160e677ae77d0d535ae88f3071628bd9e3529df474821c032@ec2-50-17-255-244.compute-1.amazonaws.com:5432/dc2bk4kf6rhivv"
   },
   "test": {
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "postgres://fapklqlermcvhy:d00fe4706f183b8160e677ae77d0d535ae88f3071628bd9e3529df474821c032@ec2-50-17-255-244.compute-1.amazonaws.com:5432/dc2bk4kf6rhivv"
   },
   "production": {
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "postgres://fapklqlermcvhy:d00fe4706f183b8160e677ae77d0d535ae88f3071628bd9e3529df474821c032@ec2-50-17-255-244.compute-1.amazonaws.com:5432/dc2bk4kf6rhivv"
   }
 }
