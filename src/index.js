@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
 
-app.listen(process.env.PORT || APP_PORT);
+app.listen(process.env.PORT);
 console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
 
 initializeDatabase().then(
