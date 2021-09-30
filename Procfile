@@ -1,2 +1,2 @@
-web: npm start
 release: sequelize db:migrate
+web: npm start
