@@ -152,15 +152,13 @@ async function getUserByID(req, res) {
     try {
         const { id } = req.params;
 
-        const user_id = Number.parseInt(req.decoded.user_id, 10);
-        const received_id = Number.parseInt(id);
+        const userID = Number.parseInt(req.decoded.userID, 10);
+        const receivedID = Number.parseInt(id);
 
-        if (user_id !== received_id) {
-            return res
-                .status(401)
-                .json({
-                    error: "you are logged in as a specific user but you're trying to get personal information of another user",
-                });
+        if (userID !== receivedID) {
+            return res.status(401).json({
+                error: "you are logged in as a specific user but you're trying to get personal information of another user",
+            });
         }
 
         const user = await User.findByPk(id, {
