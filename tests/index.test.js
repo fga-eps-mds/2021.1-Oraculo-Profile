@@ -157,29 +157,27 @@ describe("Main test", () => {
         return;
     });
 
-    it("POST /users/all - should not retrieve users list (no admin token)", async () => {
-        const res = await request(app).post("/users/all");
+    it("GET /users/all - should not retrieve users list (no admin token)", async () => {
+        const res = await request(app).get("/users/all");
         expect(res.statusCode).toEqual(401);
     });
 
-    it("POST /users/all - post without valid token", async () => {
-        const res = await request(app)
-            .post("/users/all")
-            .set("x-access-token", "invalid");
+    it("GET /users/all - post without valid token", async () => {
+        const res = await request(app).get("/users/all").set("x-access-token", "invalid");
         expect(res.statusCode).toEqual(500);
     });
 
-    it("POST /users/all - should retrieve users list", async () => {
+    it("GET /users/all - should retrieve users list", async () => {
         // list users
         const res = await request(app)
-            .post("/users/all")
+            .get("/users/all")
             .set("x-access-token", adminToken)
             .send();
 
         expect(res.statusCode).toEqual(200);
     });
 
-    it("POST /users/all - should not list users (more privileges needed)", async () => {
+    it("GET /users/all - should not list users (more privileges needed)", async () => {
         const res = await request(app).post("/login").send({
             email: user.email,
             password: user.password,
@@ -188,28 +186,38 @@ describe("Main test", () => {
         expect(res.statusCode).toBe(200);
 
         const res1 = await request(app)
-            .post("/users/all")
+            .get("/users/all")
             .set("x-access-token", res.body.token)
             .send();
 
         expect(res1.statusCode).toEqual(401);
     });
 
-    it("POST /users/all - should not list users (invalid token)", async () => {
+    it("GET /users/all - should not list users (invalid token)", async () => {
         const res1 = await request(app)
-            .post("/users/all")
+            .get("/users/all")
             .set("x-access-token", "my_invalid_token_123")
             .send();
 
         expect(res1.statusCode).toEqual(500);
     });
 
-    it("POST /user/access-level - should return user access level", async () => {
+    it("GET /user/access-level - should return user access level", async () => {
         const res = await request(app)
-            .post("/user/access-level")
+            .get("/user/access-level")
             .set("x-access-token", adminToken)
             .send();
         expect(res.statusCode).toBe(200);
+    });
+
+    it("GET /user/:id - should return information of admin user", async () => {
+        const res = await request(app).get("/user/1").set("X-Access-Token", adminToken);
+        expect(res.statusCode).toEqual(200);
+    });
+
+    it("GET /user/:id - should not return information of another user", async () => {
+        const res = await request(app).get("/user/2").set("X-Access-Token", adminToken);
+        expect(res.statusCode).toEqual(401);
     });
 });
 
