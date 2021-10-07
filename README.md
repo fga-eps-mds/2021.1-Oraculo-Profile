@@ -91,7 +91,7 @@ Para entrar no sitema, envie os dados nesse formato:
 }
 ```
 
-**POST: `/user/all`**
+**GET: `/users/all`**
 
 Para listar todos os usuários, envie os dados nesse formato:
 
@@ -101,12 +101,44 @@ header: {
 }
 ```
 
-**POST: `/user/access-level`**
+**GET: `/user/access-level`**
 
 Rota para obter o nível de acesso do usuário atual
 
 ```json
 header: {
     "X-Access-Token": "token",
+}
+```
+
+**GET: `/user/:id`**
+Rota para obter informações sobre um usuário específico
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+    "id": 1,
+    "email": "",
+    "created_at": "",
+    "updated_at": "",
+    "departments": [
+        {
+            "id": 1,
+            "name": "",
+            "user_departments": {
+                "createdAt": "",
+                "updatedAt": "",
+                "user_id": 1,
+                "department_id": 1
+            }
+        }
+    ]
 }
 ```
