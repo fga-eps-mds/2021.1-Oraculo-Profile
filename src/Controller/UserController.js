@@ -152,7 +152,7 @@ async function getUserByID(req, res) {
     try {
         const { id } = req.params;
 
-        const userID = Number.parseInt(req.decoded.userID, 10);
+        const userID = Number.parseInt(req.decoded.user_id, 10);
         const receivedID = Number.parseInt(id);
 
         if (userID !== receivedID) {
