@@ -148,20 +148,11 @@ async function getAccessLevel(req, res) {
     }
 }
 
-async function getUserByID(req, res) {
+async function getUserInfo(req, res) {
     try {
-        const { id } = req.params;
-
         const userID = Number.parseInt(req.decoded.user_id, 10);
-        const receivedID = Number.parseInt(id);
 
-        if (userID !== receivedID) {
-            return res.status(401).json({
-                error: "you are logged in as a specific user but you're trying to get personal information of another user",
-            });
-        }
-
-        const user = await User.findByPk(id, {
+        const user = await User.findByPk(userID, {
             attributes: ["id", "email", "created_at", "updated_at"],
             include: [{ association: "departments", attributes: ["id", "name"] }],
         });
@@ -177,5 +168,5 @@ module.exports = {
     loginUser,
     getUsersList,
     getAccessLevel,
-    getUserByID,
+    getUserInfo,
 };
