@@ -210,14 +210,11 @@ describe("Main test", () => {
         expect(res.statusCode).toBe(200);
     });
 
-    it("GET /user/:id - should return information of admin user", async () => {
-        const res = await request(app).get("/user/1").set("X-Access-Token", adminToken);
+    it("GET /user/info - should return information of admin user", async () => {
+        const res = await request(app)
+            .get("/user/info")
+            .set("X-Access-Token", adminToken);
         expect(res.statusCode).toEqual(200);
-    });
-
-    it("GET /user/:id - should not return information of another user", async () => {
-        const res = await request(app).get("/user/2").set("X-Access-Token", adminToken);
-        expect(res.statusCode).toEqual(401);
     });
 });
 

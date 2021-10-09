@@ -111,7 +111,7 @@ header: {
 }
 ```
 
-**GET: `/user/:id`**
+**GET: `/user/info`**
 Rota para obter informações sobre um usuário específico
 
 ```json
