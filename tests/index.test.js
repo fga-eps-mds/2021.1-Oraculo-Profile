@@ -211,7 +211,9 @@ describe("Main test", () => {
     });
 
     it("GET /user/info - should return information of admin user", async () => {
-        const res = await request(app).get("/user/1").set("X-Access-Token", adminToken);
+        const res = await request(app)
+            .get("/user/info")
+            .set("X-Access-Token", adminToken);
         expect(res.statusCode).toEqual(200);
     });
 });
