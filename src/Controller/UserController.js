@@ -15,6 +15,7 @@ async function findUserLevelByID(req) {
   const user = await User.findByPk(req.decoded.user_id, {
     include: {
       association: "levels",
+      attributes: ["name", "id"],
     },
     where: { email: req.decoded.email },
   });
@@ -154,7 +155,7 @@ async function getUserInfo(req, res) {
 
     const user = await User.findByPk(userID, {
       attributes: ["id", "name", "email", "created_at", "updated_at"],
-      include: [{ association: "departments", attributes: ["id", "name"] }],
+      include: [{ association: "sections", attributes: ["id", "name"] }],
     });
 
     return res.status(200).json(user);
