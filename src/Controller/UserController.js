@@ -75,6 +75,7 @@ async function createUser(req, res) {
     }
 
     const newUser = await User.create({
+      name: newUserInfo.name,
       email: newUserInfo.email,
       password: newUserInfo.password,
     });
@@ -89,6 +90,7 @@ async function createUser(req, res) {
 
     return res.status(200).send(newUser);
   } catch (error) {
+    console.log(`could not create user: ${error}`);
     return res.status(500).json({ error: "internal error during user register" });
   }
 }
