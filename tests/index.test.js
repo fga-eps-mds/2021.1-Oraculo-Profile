@@ -219,6 +219,23 @@ describe("Main test", () => {
     const res = await request(app).get("/user/info").set("X-Access-Token", adminToken);
     expect(res.statusCode).toEqual(200);
   });
+
+  it("POST /user/rest - should update a password", async () => {
+    const res = await request(app)
+      .post("/user/reset")
+      .set("x-access-token", adminToken)
+      .send(user1.password);
+
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("POST /user/reset - invalid user", async () => {
+    const res = await request(app)
+      .post("/user/reset")
+      .set("x-access-token", adminToken)
+      .send(user1.email);
+    expect(res.statusCode).toEqual(400);
+  });
 });
 
 afterAll((done) => {
