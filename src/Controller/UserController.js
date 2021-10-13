@@ -166,10 +166,29 @@ async function getUserInfo(req, res) {
   }
 }
 
+async function updatePassword(req, res) {
+  try {
+    const user = User.findByPk(req.decoded.user_id);
+    const newPassword = req.body.password;
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid link or expired" });
+    }
+
+    user.password = hashPassword(newPassword);
+
+    user.save();
+    return res.status(200).send("Password reset sucessfully.");
+  } catch (error) {
+    return res.status(500).json({ error: "Internal error during update password" });
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
   getUsersList,
   getAccessLevel,
   getUserInfo,
+  updatePassword,
 };
