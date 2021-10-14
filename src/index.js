@@ -7,7 +7,7 @@ const morgan = require("morgan");
 
 env.config();
 
-const { APP_PORT } = process.env;
+const { PORT } = process.env;
 
 const app = express();
 app.disable("x-powered-by");
@@ -17,8 +17,8 @@ app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
 
-app.listen(APP_PORT);
-console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
+app.listen(PORT);
+console.info(`Serving HTTP at: http://localhost:${PORT}`);
 
 initializeDatabase().then(
   () => {
