@@ -20,7 +20,14 @@ async function setupModels(db) {
 async function setupSequelize(config) {
   require("dotenv").config();
   console.info(`connecting to ${process.env.DATABASE_URL}`);
-  return new Sequelize(process.env.DATABASE_URL);
+  return new Sequelize(process.env.DATABASE_URL, {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  });
 }
 
 async function configure(auth, db) {
