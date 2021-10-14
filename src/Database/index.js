@@ -21,6 +21,10 @@ async function setupSequelize(config) {
   require("dotenv").config();
   console.info(`connecting to ${process.env.DATABASE_URL}`);
   return new Sequelize(process.env.DATABASE_URL, {
+    define: {
+      timestamps: true,
+      underscored: true,
+    },
     dialectOptions: {
       ssl: {
         require: true,
