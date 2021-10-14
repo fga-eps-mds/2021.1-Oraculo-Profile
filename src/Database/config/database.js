@@ -15,5 +15,5 @@ module.exports = {
 		timestamps: true,
 		underscored: true,
 	},
-	native: true,
+	ssl: true,
 };
