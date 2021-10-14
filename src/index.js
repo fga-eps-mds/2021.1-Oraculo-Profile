@@ -26,6 +26,7 @@ initializeDatabase().then(
   },
   () => {
     console.error(`could not connect to database`);
+    process.exit(1);
   }
 );
 
