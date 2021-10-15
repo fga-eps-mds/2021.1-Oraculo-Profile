@@ -12,7 +12,7 @@ const { PORT } = process.env;
 const app = express();
 app.disable("x-powered-by");
 
-app.use(cors({ origin: "https://oraculo-frontend.herokuapp.com/" }));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
