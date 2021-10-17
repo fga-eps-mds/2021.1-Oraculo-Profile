@@ -74,6 +74,8 @@ describe("Main test", () => {
     process.env.PROD = "true";
     const result = loadEnvironment();
     expect(result).toBeDefined();
+    process.env.PROD = "";
+    done();
   });
 
   it("Test if we have a token", (done) => {
