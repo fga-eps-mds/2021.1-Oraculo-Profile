@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage --forceExit",
-    "db:migrate": "export DATABASE_URL=postgres://oraculo:oraculo123@localhost:5432/oraculo && npx sequelize db:migrate",
+    "db:migrate": "export DATABASE_URL=postgres://oraculo:oraculo123@localhost:5432/oraculo && sleep 3 && npx sequelize db:migrate",
     "docker:clean": "sudo docker container rm -f oraculo-banco-profiles oraculo-profiles oraculo-pgadmin-profiles",
     "docker:up": "sudo docker-compose up -d --build",
     "db:up": "sudo docker-compose up -d --build banco",
