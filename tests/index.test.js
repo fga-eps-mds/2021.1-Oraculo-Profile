@@ -1,6 +1,6 @@
 const app = require("../src");
 const request = require("supertest");
-const { initializeDatabase, loadEnvironment } = require("../src/Database");
+const { initializeDatabase } = require("../src/Database");
 
 const adminUser = {
   name: "Carlos",
@@ -47,6 +47,24 @@ const anotherAdmin = {
   sectionID: 1,
 };
 
+describe("Sub Test", () => {
+  const test1 = 1;
+  const test2 = 2;
+  const { loadEnvironment } = require("../src/Database");
+
+  it("Test empty database URL", (done) => {
+    const result = loadEnvironment(test1);
+    expect(result).toBe(null);
+    done();
+  });
+
+  it("Test PROD environment var", (done) => {
+    const result = loadEnvironment(test2);
+    expect(result.dialectOptions).toBeDefined();
+    done();
+  });
+});
+
 describe("Main test", () => {
   let adminToken = "";
 
@@ -59,14 +77,6 @@ describe("Main test", () => {
     expect(res.statusCode).toBe(200);
     adminToken = res.body.token;
     expect(adminToken).toBeDefined();
-  });
-
-  it("Test PROD environment var", (done) => {
-    process.env.PROD = "true";
-    const result = loadEnvironment();
-    expect(result).toBeDefined();
-    process.env.PROD = "";
-    done();
   });
 
   it("Test if we have a token", (done) => {
