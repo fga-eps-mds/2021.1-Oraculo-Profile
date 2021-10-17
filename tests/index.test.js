@@ -47,6 +47,24 @@ const anotherAdmin = {
   sectionID: 1,
 };
 
+describe("Sub Test", () => {
+  const test1 = 1;
+  const test2 = 2;
+  const { loadEnvironment } = require("../src/Database");
+
+  it("Test empty database URL", (done) => {
+    const result = loadEnvironment(test1);
+    expect(result).toBe(null);
+    done();
+  });
+
+  it("Test PROD environment var", (done) => {
+    const result = loadEnvironment(test2);
+    expect(result.dialectOptions).toBeDefined();
+    done();
+  });
+});
+
 describe("Main test", () => {
   let adminToken = "";
 
@@ -168,7 +186,9 @@ describe("Main test", () => {
   });
 
   it("GET /users/all - post without valid token", async () => {
-    const res = await request(app).get("/users/all").set("x-access-token", "invalid");
+    const res = await request(app)
+      .get("/users/all")
+      .set("x-access-token", "invalid");
     expect(res.statusCode).toEqual(500);
   });
 
@@ -216,7 +236,9 @@ describe("Main test", () => {
   });
 
   it("GET /user/info - should return information of admin user", async () => {
-    const res = await request(app).get("/user/info").set("X-Access-Token", adminToken);
+    const res = await request(app)
+      .get("/user/info")
+      .set("X-Access-Token", adminToken);
     expect(res.statusCode).toEqual(200);
   });
 });
