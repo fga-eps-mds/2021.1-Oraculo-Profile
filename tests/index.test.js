@@ -61,15 +61,6 @@ describe("Main test", () => {
     expect(adminToken).toBeDefined();
   });
 
-  it("Test empty DATABASE_URL", (done) => {
-    let OLD_DATABASE_URL = process.env.DATABASE_URL;
-    process.env.DATABASE_URL = "";
-    const result = loadEnvironment();
-    expect(result).toBe(null);
-    process.env.DATABASE_URL = OLD_DATABASE_URL;
-    done();
-  });
-
   it("Test PROD environment var", (done) => {
     process.env.PROD = "true";
     const result = loadEnvironment();
