@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn
-      - run: yarn run docker:up
+      - run: yarn run db:up
       - run: yarn run db:migrate
       - run: yarn run user:create # creates admin user
       - run: yarn run test
