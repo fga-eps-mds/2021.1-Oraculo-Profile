@@ -12,7 +12,7 @@ function loadEnvironment() {
 
   if (DATABASE_URL === undefined || DATABASE_URL === "") {
     console.error("DATABASE_URL: empty required environment variable");
-    process.exit(1);
+    return null;
   }
 
   // Checks if we are being deployed at production/homol environment
@@ -81,4 +81,5 @@ async function initializeDatabase() {
 
 module.exports = {
   initializeDatabase,
+  loadEnvironment,
 };

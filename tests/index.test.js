@@ -1,6 +1,6 @@
 const app = require("../src");
 const request = require("supertest");
-const { initializeDatabase } = require("../src/Database");
+const { initializeDatabase, loadEnvironment } = require("../src/Database");
 
 const adminUser = {
   name: "Carlos",
@@ -59,6 +59,21 @@ describe("Main test", () => {
     expect(res.statusCode).toBe(200);
     adminToken = res.body.token;
     expect(adminToken).toBeDefined();
+  });
+
+  it("Test empty DATABASE_URL", (done) => {
+    let OLD_DATABASE_URL = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = "";
+    const result = loadEnvironment();
+    expect(result).toBe(null);
+    process.env.DATABASE_URL = OLD_DATABASE_URL;
+    done();
+  });
+
+  it("Test PROD environment var", (done) => {
+    process.env.PROD = "true";
+    const result = loadEnvironment();
+    expect(result).toBeDefined();
   });
 
   it("Test if we have a token", (done) => {
@@ -168,7 +183,9 @@ describe("Main test", () => {
   });
 
   it("GET /users/all - post without valid token", async () => {
-    const res = await request(app).get("/users/all").set("x-access-token", "invalid");
+    const res = await request(app)
+      .get("/users/all")
+      .set("x-access-token", "invalid");
     expect(res.statusCode).toEqual(500);
   });
 
@@ -216,7 +233,9 @@ describe("Main test", () => {
   });
 
   it("GET /user/info - should return information of admin user", async () => {
-    const res = await request(app).get("/user/info").set("X-Access-Token", adminToken);
+    const res = await request(app)
+      .get("/user/info")
+      .set("X-Access-Token", adminToken);
     expect(res.statusCode).toEqual(200);
   });
 });
