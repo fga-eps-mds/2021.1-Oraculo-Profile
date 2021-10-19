@@ -7,26 +7,28 @@ const morgan = require("morgan");
 
 env.config();
 
-const { APP_PORT } = process.env;
+const { PORT, APP_PORT } = process.env;
+
+const corsOptions = {
+  origin: "https://oraculo-frontend.herokuapp.com",
+};
 
 const app = express();
 app.disable("x-powered-by");
 
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
 
-app.listen(APP_PORT);
-console.info(`Serving HTTP at: http://localhost:${APP_PORT}`);
+if (PORT === undefined) {
+  app.listen(APP_PORT);
+  console.log(`HTTP server started on port ${APP_PORT}`);
+} else {
+  app.listen(PORT);
+  console.log(`HTTP server started on port ${PORT}`);
+}
 
-initializeDatabase().then(
-  () => {
-    console.info(`connected to database`);
-  },
-  () => {
-    console.error(`could not connect to database`);
-  }
-);
+initializeDatabase();
 
 module.exports = app;
