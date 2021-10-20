@@ -187,7 +187,7 @@ describe("Main test", () => {
 
   it("GET /users/all - post without valid token", async () => {
     const res = await request(app).get("/users/all").set("x-access-token", "invalid");
-    expect(res.statusCode).toEqual(513);
+    expect(res.statusCode).toEqual(511);
   });
 
   it("GET /users/all - should retrieve users list", async () => {
@@ -222,7 +222,7 @@ describe("Main test", () => {
       .set("x-access-token", "my_invalid_token_123")
       .send();
 
-    expect(res1.statusCode).toEqual(513);
+    expect(res1.statusCode).toEqual(511);
   });
 
   it("GET /user/access-level - should return user access level", async () => {
