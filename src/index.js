@@ -16,12 +16,7 @@ const corsOptions = {
 const app = express();
 app.disable("x-powered-by");
 
-if (TEST === "true") {
-  console.log("Warning: test mode enabled");
-  app.use(cors());
-} else {
-  app.use(cors(corsOptions));
-}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
