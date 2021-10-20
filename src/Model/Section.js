@@ -1,4 +1,4 @@
-const { Model, Sequelize } = require("sequelize");
+const { Model, Sequelize, Op } = require("sequelize");
 
 class Section extends Model {
   static init(db) {
@@ -26,7 +26,9 @@ class Section extends Model {
       return Section.findOne({
         attributes: ["id", "name"],
         where: {
-          name: "none",
+          name: {
+            [Op.eq]: "none",
+          },
         },
       });
     } catch (err) {
