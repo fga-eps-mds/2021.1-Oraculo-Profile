@@ -22,19 +22,14 @@ class Department extends Model {
   }
 
   static getEmpty() {
-    try {
-      return Department.findOne({
-        attributes: ["id", "name"],
-        where: {
-          name: {
-            [Op.eq]: "none",
-          },
+    return Department.findOne({
+      attributes: ["id", "name"],
+      where: {
+        name: {
+          [Op.eq]: "none",
         },
-      });
-    } catch (err) {
-      console.error(`internal error ==> could not get departments: ${err}`);
-      return null;
-    }
+      },
+    });
   }
 }
 

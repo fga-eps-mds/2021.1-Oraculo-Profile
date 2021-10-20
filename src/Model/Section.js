@@ -22,19 +22,14 @@ class Section extends Model {
   }
 
   static getEmpty() {
-    try {
-      return Section.findOne({
-        attributes: ["id", "name"],
-        where: {
-          name: {
-            [Op.eq]: "none",
-          },
+    return Section.findOne({
+      attributes: ["id", "name"],
+      where: {
+        name: {
+          [Op.eq]: "none",
         },
-      });
-    } catch (err) {
-      console.error(`internal error => could not get sections: ${err}`);
-      return null;
-    }
+      },
+    });
   }
 }
 
