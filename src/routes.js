@@ -9,5 +9,8 @@ router.post("/login", UserController.loginUser);
 router.get("/users/all", jwt.verifyJWT, UserController.getUsersList);
 router.get("/user/access-level", jwt.verifyJWT, UserController.getAccessLevel);
 router.get("/user/info", jwt.verifyJWT, UserController.getUserInfo);
+router.get("/departments", UserController.getAvailableDepartments);
+router.get("/levels", UserController.getPrivilegeLevels);
+router.get("/sections", UserController.getAvailableSections);
 
 module.exports = router;

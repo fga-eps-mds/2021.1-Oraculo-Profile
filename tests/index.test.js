@@ -24,7 +24,7 @@ const user = {
   name: "Jane",
   email: "useroraculo@email.com",
   password: "oraculo123",
-  departmentID: 3,
+  departmentID: 0,
   level: 2,
   sectionID: 3,
 };
@@ -35,7 +35,7 @@ const user1 = {
   password: "oraculo12345",
   departmentID: 3,
   level: 2,
-  sectionID: 3,
+  sectionID: 0,
 };
 
 const anotherAdmin = {
@@ -44,7 +44,16 @@ const anotherAdmin = {
   password: "admin1234",
   departmentID: 4,
   level: 1,
-  sectionID: 1,
+  sectionID: 0,
+};
+
+const userInvalidInformation1 = {
+  name: "Invalid User",
+  email: "invalid@gmail.com",
+  password: "admin1234",
+  departmentID: 0,
+  level: 1,
+  sectionID: 0,
 };
 
 describe("Sub Test", () => {
@@ -144,6 +153,15 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
+  it("POST /register - should not create user (invalid section and department", async () => {
+    const res = await request(app)
+      .post("/register")
+      .set("x-access-token", adminToken)
+      .send(userInvalidInformation1);
+
+    expect(res.statusCode).toEqual(400);
+  });
+
   it("POST /login - should login", async () => {
     const res = await request(app)
       .post("/login")
@@ -186,10 +204,8 @@ describe("Main test", () => {
   });
 
   it("GET /users/all - post without valid token", async () => {
-    const res = await request(app)
-      .get("/users/all")
-      .set("x-access-token", "invalid");
-    expect(res.statusCode).toEqual(500);
+    const res = await request(app).get("/users/all").set("x-access-token", "invalid");
+    expect(res.statusCode).toEqual(511);
   });
 
   it("GET /users/all - should retrieve users list", async () => {
@@ -224,7 +240,7 @@ describe("Main test", () => {
       .set("x-access-token", "my_invalid_token_123")
       .send();
 
-    expect(res1.statusCode).toEqual(500);
+    expect(res1.statusCode).toEqual(511);
   });
 
   it("GET /user/access-level - should return user access level", async () => {
@@ -236,9 +252,22 @@ describe("Main test", () => {
   });
 
   it("GET /user/info - should return information of admin user", async () => {
-    const res = await request(app)
-      .get("/user/info")
-      .set("X-Access-Token", adminToken);
+    const res = await request(app).get("/user/info").set("X-Access-Token", adminToken);
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("GET /departments - should return a list of all available departments", async () => {
+    const res = await request(app).get("/departments");
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("GET /sections - should return a list of all available sections", async () => {
+    const res = await request(app).get("/sections");
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("GET /levels - should return a list of all available user levels", async () => {
+    const res = await request(app).get("/levels");
     expect(res.statusCode).toEqual(200);
   });
 });
