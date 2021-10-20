@@ -84,7 +84,7 @@ async function createUser(req, res) {
 
     const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
     if (
-      (!department && newUserInfo.levelID == privilegeTypes.admin) ||
+      (!department && newUserInfo.levelID === privilegeTypes.admin) ||
       !level ||
       !section
     ) {
