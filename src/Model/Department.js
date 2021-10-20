@@ -23,7 +23,7 @@ class Department extends Model {
 
   static getEmpty() {
     try {
-      return await Department.findOne({
+      return Department.findOne({
         attributes: ["id", "name"],
         where: {
           name: "none",

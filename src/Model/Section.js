@@ -23,7 +23,7 @@ class Section extends Model {
 
   static getEmpty() {
     try {
-      return await Section.findOne({
+      return Section.findOne({
         attributes: ["id", "name"],
         where: {
           name: "none",
