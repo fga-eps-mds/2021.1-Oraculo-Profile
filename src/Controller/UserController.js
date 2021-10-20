@@ -3,6 +3,7 @@ const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
 const { Section } = require("../Model/Section");
 const { hashPassword } = require("../Utils/hash");
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -193,7 +194,7 @@ async function getAvailableDepartments(req, res) {
     attributes: ["id", "name"],
     where: {
       name: {
-        ne: "none",
+        [Op.not]: "none",
       },
     },
   });
@@ -213,7 +214,7 @@ async function getAvailableSections(req, res) {
     attributes: ["id", "name"],
     where: {
       name: {
-        ne: "none",
+        [Op.not]: "none",
       },
     },
   }).then((sections) => {
