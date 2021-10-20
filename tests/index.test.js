@@ -24,7 +24,7 @@ const user = {
   name: "Jane",
   email: "useroraculo@email.com",
   password: "oraculo123",
-  departmentID: 3,
+  departmentID: 0,
   level: 2,
   sectionID: 3,
 };
@@ -35,7 +35,7 @@ const user1 = {
   password: "oraculo12345",
   departmentID: 3,
   level: 2,
-  sectionID: 3,
+  sectionID: 0,
 };
 
 const anotherAdmin = {
@@ -44,7 +44,7 @@ const anotherAdmin = {
   password: "admin1234",
   departmentID: 4,
   level: 1,
-  sectionID: 1,
+  sectionID: 0,
 };
 
 const userInvalidInformation1 = {
