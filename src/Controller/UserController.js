@@ -27,14 +27,7 @@ async function findUserLevelByID(req) {
 }
 
 async function createUser(req, res) {
-  if (
-    !req.body.name ||
-    !req.body.password ||
-    !req.body.email ||
-    !req.body.departmentID ||
-    !req.body.level ||
-    !req.body.sectionID
-  ) {
+  if (!req.body.name || !req.body.password || !req.body.email || !req.body.level) {
     return res.status(400).send({
       error: "lacks of information to register user",
     });
@@ -62,7 +55,7 @@ async function createUser(req, res) {
     };
 
     if (newUserInfo.departmentID === 0 && newUserInfo.sectionID > 0) {
-      const emptyDepartment = Department.getEmpty();
+      const emptyDepartment = await Department.getEmpty();
 
       // user is not admin
       newUserInfo.levelID = privilegeTypes.common;
@@ -70,13 +63,14 @@ async function createUser(req, res) {
       // all users are inserted to high level department by default
       newUserInfo.departmentID = emptyDepartment.id;
     } else if (newUserInfo.sectionID === 0 && newUserInfo.departmentID > 0) {
-      const emptySection = Section.getEmpty();
+      const emptySection = await Section.getEmpty();
+
       newUserInfo.levelID = privilegeTypes.admin;
       newUserInfo.sectionID = emptySection.id;
     } else {
       return res
         .status(400)
-        .json({ error: "department ID and sectionID cannot be zero at the same time" });
+        .json({ error: "invalid values for department ID or sectionID" });
     }
 
     // Search for user department and level
