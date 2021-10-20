@@ -30,7 +30,7 @@ module.exports = {
       },
     });
 
-    return queryInterface.bulkInsert("levels", userAccessLevels);
+    return queryInterface.createTable("levels", userAccessLevels);
   },
 
   down: async (queryInterface, Sequelize) => {

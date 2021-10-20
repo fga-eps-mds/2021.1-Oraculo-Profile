@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("departments", {
+    return queryInterface.createTable("departments", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -22,8 +22,6 @@ module.exports = {
         allowNull: false,
       },
     });
-
-    return queryInterface.bulkInsert("departments", departments);
   },
 
   down: async (queryInterface, Sequelize) => {
