@@ -7,7 +7,7 @@ const morgan = require("morgan");
 
 env.config();
 
-const { PORT, APP_PORT } = process.env;
+const { PORT, APP_PORT, TEST } = process.env;
 
 const corsOptions = {
   origin: "https://oraculo-frontend.herokuapp.com",
@@ -16,7 +16,12 @@ const corsOptions = {
 const app = express();
 app.disable("x-powered-by");
 
-app.use(cors(corsOptions));
+if (TEST === "true") {
+  console.log("Warning: test mode enabled");
+  app.use(cors());
+} else {
+  app.use(cors(corsOptions));
+}
 app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
