@@ -60,14 +60,22 @@ async function createUser(req, res) {
       sectionID: Number.parseInt(req.body.sectionID),
     };
 
-    if (newUserInfo.departmentID === 0) {
+    if (newUserInfo.departmentID === 0 && newUserInfo.sectionID > 0) {
+      const emptyDepartment = Department.getEmpty();
+
       // user is not admin
       newUserInfo.levelID = privilegeTypes.common;
 
       // all users are inserted to high level department by default
-      newUserInfo.departmentID = 1;
-    } else {
+      newUserInfo.departmentID = emptyDepartment.id;
+    } else if (newUserInfo.sectionID === 0 && newUserInfo.departmentID > 0) {
+      const emptySection = Section.getEmpty();
       newUserInfo.levelID = privilegeTypes.admin;
+      newUserInfo.sectionID = emptySection.id;
+    } else {
+      return res
+        .status(400)
+        .json({ error: "department ID and sectionID cannot be zero at the same time" });
     }
 
     // Search for user department and level
@@ -183,6 +191,11 @@ async function getUserInfo(req, res) {
 async function getAvailableDepartments(req, res) {
   const departments = await Department.findAll({
     attributes: ["id", "name"],
+    where: {
+      name: {
+        ne: "none",
+      },
+    },
   });
   return res.status(200).json(departments);
 }
@@ -196,7 +209,14 @@ async function getPrivilegeLevels(req, res) {
 }
 
 async function getAvailableSections(req, res) {
-  Section.findAll({ attributes: ["id", "name"] }).then((sections) => {
+  Section.findAll({
+    attributes: ["id", "name"],
+    where: {
+      name: {
+        ne: "none",
+      },
+    },
+  }).then((sections) => {
     return res.status(200).json(sections);
   });
 }

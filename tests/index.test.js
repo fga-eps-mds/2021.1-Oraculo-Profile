@@ -237,6 +237,21 @@ describe("Main test", () => {
     const res = await request(app).get("/user/info").set("X-Access-Token", adminToken);
     expect(res.statusCode).toEqual(200);
   });
+
+  it("GET /departments - should return a list of all available departments", async () => {
+    const res = await request(app).get("/departments");
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("GET /sections - should return a list of all available sections", async () => {
+    const res = await request(app).get("/sections");
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("GET /levels - should return a list of all available user levels", async () => {
+    const res = await request(app).get("/levels");
+    expect(res.statusCode).toEqual(200);
+  });
 });
 
 afterAll((done) => {
