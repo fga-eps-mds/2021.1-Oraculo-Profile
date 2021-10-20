@@ -55,10 +55,20 @@ async function createUser(req, res) {
       name: req.body.name,
       password: await hashPassword(rawPassword),
       email: req.body.email,
-      departmentID: req.body.departmentID,
-      levelID: req.body.level,
-      sectionID: req.body.sectionID,
+      departmentID: Number.parseInt(req.body.departmentID),
+      levelID: Number.parseInt(req.body.level),
+      sectionID: Number.parseInt(req.body.sectionID),
     };
+
+    if (newUserInfo.departmentID === 0) {
+      // user is not admin
+      newUserInfo.levelID = privilegeTypes.common;
+
+      // all users are inserted to high level department by default
+      newUserInfo.departmentID = 1;
+    } else {
+      newUserInfo.levelID = privilegeTypes.admin;
+    }
 
     // Search for user department and level
     const department = await Department.findOne({
@@ -70,7 +80,11 @@ async function createUser(req, res) {
     });
 
     const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
-    if (!department || !level || !section) {
+    if (
+      (!department && newUserInfo.levelID == privilegeTypes.admin) ||
+      !level ||
+      !section
+    ) {
       return res.status(400).send({ error: "invalid user information provided" });
     }
 
@@ -166,10 +180,34 @@ async function getUserInfo(req, res) {
   }
 }
 
+async function getAvailableDepartments(req, res) {
+  const departments = await Department.findAll({
+    attributes: ["id", "name"],
+  });
+  return res.status(200).json(departments);
+}
+
+async function getPrivilegeLevels(req, res) {
+  const levels = await Level.findAll({
+    attributes: ["id", "name"],
+  });
+
+  return res.status(200).json(levels);
+}
+
+async function getAvailableSections(req, res) {
+  Section.findAll({ attributes: ["id", "name"] }).then((sections) => {
+    return res.status(200).json(sections);
+  });
+}
+
 module.exports = {
   createUser,
   loginUser,
   getUsersList,
   getAccessLevel,
   getUserInfo,
+  getAvailableDepartments,
+  getPrivilegeLevels,
+  getAvailableSections,
 };
