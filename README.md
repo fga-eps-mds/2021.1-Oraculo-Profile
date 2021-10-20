@@ -31,11 +31,11 @@ npx jest --coverage --forceExit
 
 O arquivo .env possui configurações iniciais que podem ser alteradas de acordo com a necessidade. São elas:
 
--   SECRET: chave para criptografia das senhas
--   DB_USER: usuário de acesso ao banco de dados
--   DB_PASS: senha de acesso ao banco de dados
--   DB_NAME: nome da base de dados
--   DB_HOST: host da base de dados
+- SECRET: chave para criptografia das senhas
+- DB_USER: usuário de acesso ao banco de dados
+- DB_PASS: senha de acesso ao banco de dados
+- DB_NAME: nome da base de dados
+- DB_HOST: host da base de dados
 
 Veja o exemplo abaixo:
 
@@ -71,14 +71,17 @@ Para criar um novo usuário, envie os dados nesse formato:
 
 ```json
 {
-    "name": "Nome do Usuário",
-    "email": "usuario@email.com",
-    "departmentID": "Id do departamento",
-    "levelID": "Id da permissão de usuário",
-    "sectionID": "Id da sessão",
-    "password": "Senha"
+  "name": "Nome do Usuário",
+  "email": "usuario@email.com",
+  "departmentID": "Id do departamento",
+  "level": "Id da permissão de usuário",
+  "sectionID": "Id da seção",
+  "password": "Senha"
 }
 ```
+
+- Importante: apenas o _id_ da seção ou o _id_ do departamento podem ser nulos. Usuários com privilégios de administrador sempre deverão ser criados com um `departmentID > 0` e `sectionID = 0`
+  enquanto que usuários comuns deverão ser criados com um `sectionID > 0` e `departmentID = 0`.
 
 **POST: `/login/`**
 
@@ -86,8 +89,8 @@ Para entrar no sitema, envie os dados nesse formato:
 
 ```json
 {
-    "email": "usuario@email.com",
-    "password": "Senha"
+  "email": "usuario@email.com",
+  "password": "Senha"
 }
 ```
 
@@ -124,21 +127,45 @@ Resposta esperada:
 
 ```json
 {
-    "id": 1,
-    "email": "",
-    "created_at": "",
-    "updated_at": "",
-    "departments": [
-        {
-            "id": 1,
-            "name": "",
-            "user_departments": {
-                "createdAt": "",
-                "updatedAt": "",
-                "user_id": 1,
-                "department_id": 1
-            }
-        }
-    ]
+  "id": 1,
+  "email": "",
+  "created_at": "",
+  "updated_at": "",
+  "departments": [
+    {
+      "id": 1,
+      "name": "",
+      "user_departments": {
+        "createdAt": "",
+        "updatedAt": "",
+        "user_id": 1,
+        "department_id": 1
+      }
+    }
+  ]
 }
+```
+
+**GET: `/departments`**
+Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
+
+**GET: `/levels`**
+Envie uma requisição nesse endpoint para obter a lista de níveis de acesso existentes
+
+**GET: `/sections`**
+Envie uma requisição nesse endpoint para obter a lista de seções existentes
+
+- Formato de resposta padrão para as requisições anteriores:
+
+```json
+[
+  {
+    "id": 0,
+    "name": ""
+  },
+  {
+    "id": 0,
+    "name": ""
+  }
+]
 ```
