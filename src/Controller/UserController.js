@@ -3,6 +3,7 @@ const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
 const { Section } = require("../Model/Section");
 const { hashPassword } = require("../Utils/hash");
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -26,14 +27,7 @@ async function findUserLevelByID(req) {
 }
 
 async function createUser(req, res) {
-  if (
-    !req.body.name ||
-    !req.body.password ||
-    !req.body.email ||
-    !req.body.departmentID ||
-    !req.body.level ||
-    !req.body.sectionID
-  ) {
+  if (!req.body.name || !req.body.password || !req.body.email || !req.body.level) {
     return res.status(400).send({
       error: "lacks of information to register user",
     });
@@ -55,10 +49,29 @@ async function createUser(req, res) {
       name: req.body.name,
       password: await hashPassword(rawPassword),
       email: req.body.email,
-      departmentID: req.body.departmentID,
-      levelID: req.body.level,
-      sectionID: req.body.sectionID,
+      departmentID: Number.parseInt(req.body.departmentID),
+      levelID: Number.parseInt(req.body.level),
+      sectionID: Number.parseInt(req.body.sectionID),
     };
+
+    if (newUserInfo.departmentID === 0 && newUserInfo.sectionID > 0) {
+      const emptyDepartment = await Department.getEmpty();
+
+      // user is not admin
+      newUserInfo.levelID = privilegeTypes.common;
+
+      // all users are inserted to high level department by default
+      newUserInfo.departmentID = emptyDepartment.id;
+    } else if (newUserInfo.sectionID === 0 && newUserInfo.departmentID > 0) {
+      const emptySection = await Section.getEmpty();
+
+      newUserInfo.levelID = privilegeTypes.admin;
+      newUserInfo.sectionID = emptySection.id;
+    } else {
+      return res
+        .status(400)
+        .json({ error: "invalid values for department ID or sectionID" });
+    }
 
     // Search for user department and level
     const department = await Department.findOne({
@@ -70,7 +83,11 @@ async function createUser(req, res) {
     });
 
     const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
-    if (!department || !level || !section) {
+    if (
+      (!department && newUserInfo.levelID === privilegeTypes.admin) ||
+      !level ||
+      !section
+    ) {
       return res.status(400).send({ error: "invalid user information provided" });
     }
 
@@ -166,22 +183,37 @@ async function getUserInfo(req, res) {
   }
 }
 
-async function updatePassword(req, res) {
-  try {
-    const user = User.findByPk(req.decoded.user_id);
-    const newPassword = req.body.password;
+async function getAvailableDepartments(req, res) {
+  const departments = await Department.findAll({
+    attributes: ["id", "name"],
+    where: {
+      name: {
+        [Op.not]: "none",
+      },
+    },
+  });
+  return res.status(200).json(departments);
+}
 
-    if (!user) {
-      return res.status(400).json({ error: "Invalid link or expired" });
-    }
+async function getPrivilegeLevels(req, res) {
+  const levels = await Level.findAll({
+    attributes: ["id", "name"],
+  });
 
-    user.password = hashPassword(newPassword);
+  return res.status(200).json(levels);
+}
 
-    user.save();
-    return res.status(200).send("Password reset sucessfully.");
-  } catch (error) {
-    return res.status(500).json({ error: "Internal error during update password" });
-  }
+async function getAvailableSections(req, res) {
+  Section.findAll({
+    attributes: ["id", "name"],
+    where: {
+      name: {
+        [Op.not]: "none",
+      },
+    },
+  }).then((sections) => {
+    return res.status(200).json(sections);
+  });
 }
 
 module.exports = {
@@ -190,5 +222,7 @@ module.exports = {
   getUsersList,
   getAccessLevel,
   getUserInfo,
-  updatePassword,
+  getAvailableDepartments,
+  getPrivilegeLevels,
+  getAvailableSections,
 };

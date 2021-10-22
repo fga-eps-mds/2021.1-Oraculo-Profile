@@ -10,7 +10,7 @@ const { PROD, DATABASE_URL } = process.env;
 function loadEnvironment(testing) {
   let options;
 
-  if (DATABASE_URL == undefined || DATABASE_URL === "" || testing === 1) {
+  if (DATABASE_URL === undefined || DATABASE_URL === "" || testing === 1) {
     console.error("DATABASE_URL: empty required environment variable");
     return null;
   }
