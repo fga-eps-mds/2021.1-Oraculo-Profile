@@ -153,6 +153,15 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
+  it("POST /register - should not create user (invalid section and department", async () => {
+    const res = await request(app)
+      .post("/register")
+      .set("x-access-token", adminToken)
+      .send(userInvalidInformation1);
+
+    expect(res.statusCode).toEqual(400);
+  });
+
   it("POST /login - should login", async () => {
     const res = await request(app)
       .post("/login")
