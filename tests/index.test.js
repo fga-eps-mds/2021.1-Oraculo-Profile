@@ -153,15 +153,6 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  it("POST /register - should not create user (invalid section and department", async () => {
-    const res = await request(app)
-      .post("/register")
-      .set("x-access-token", adminToken)
-      .send(userInvalidInformation1);
-
-    expect(res.statusCode).toEqual(400);
-  });
-
   it("POST /login - should login", async () => {
     const res = await request(app)
       .post("/login")
@@ -271,21 +262,20 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  it("POST /user/rest - should update a password", async () => {
+  it("POST /user/change-password - should update a password", async () => {
     const res = await request(app)
-      .post("/user/reset")
+      .post("/user/change-password")
       .set("x-access-token", adminToken)
-      .send(user1.password);
-
-    expect(res.statusCode).toBe(200);
+      .send({password: user1.password});
+    expect(res.statusCode).toEqual(200);
   });
 
-  it("POST /user/reset - invalid user", async () => {
+  it("POST /user/change-password - should not insert password", async () => {
     const res = await request(app)
-      .post("/user/reset")
+      .post("/user/change-password")
       .set("x-access-token", adminToken)
-      .send(user1.email);
-    expect(res.statusCode).toEqual(400);
+      .send();
+    expect(res.statusCode).toEqual(500);
   });
 });
 
