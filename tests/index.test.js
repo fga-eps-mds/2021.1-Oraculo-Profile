@@ -270,6 +270,22 @@ describe("Main test", () => {
     const res = await request(app).get("/levels");
     expect(res.statusCode).toEqual(200);
   });
+
+  it("POST /user/change-password - should update a password", async () => {
+    const res = await request(app)
+      .post("/user/change-password")
+      .set("x-access-token", adminToken)
+      .send({password: user1.password});
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("POST /user/change-password - should not insert password", async () => {
+    const res = await request(app)
+      .post("/user/change-password")
+      .set("x-access-token", adminToken)
+      .send();
+    expect(res.statusCode).toEqual(500);
+  });
 });
 
 afterAll((done) => {
