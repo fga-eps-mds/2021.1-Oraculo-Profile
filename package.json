@@ -12,6 +12,7 @@
     "docker:clean": "sudo docker container rm -f oraculo-banco-profiles oraculo-profiles oraculo-pgadmin-profiles",
     "docker:up": "sudo docker-compose up -d --build banco && sleep 5 && sudo docker-compose up -d profile",
     "db:up": "sudo docker-compose up -d --build banco",
+    "all": "yarn run docker:clean && yarn run docker:up && yarn run db:migrate && yarn run db:seeders && yarn run user:create",
     "start": "node src/index.js",
     "start:prod": "node src/index.js",
     "user:create": "export DATABASE_URL=postgres://oraculo:oraculo123@localhost:5432/oraculo && node tests/create-admin.js"
