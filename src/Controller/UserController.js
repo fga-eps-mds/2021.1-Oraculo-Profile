@@ -216,6 +216,24 @@ async function getAvailableSections(req, res) {
   });
 }
 
+async function updatePassword(req, res) {
+  try {
+    const user = User.findByPk(req.decoded.user_id);
+    const newPassword = req.body.password;
+
+    if (!newPassword) {
+      return res.status(500).json({ error: "Not insert password" });
+    }
+
+    user.password = hashPassword(newPassword);
+
+    (await user).save();
+    return res.status(200).send("Password reset sucessfully.");
+  } catch (error) {
+    return res.status(500).json({ error: "Internal error during update password" });
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -225,4 +243,5 @@ module.exports = {
   getAvailableDepartments,
   getPrivilegeLevels,
   getAvailableSections,
+  updatePassword,
 };
