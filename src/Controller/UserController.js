@@ -234,6 +234,24 @@ async function updatePassword(req, res) {
   }
 }
 
+async function updateUser(req, res) {
+  try {
+    const updateUser = ({
+      user = User.findByPk(req.decoded.user_id),
+      name: req.body.name,
+      email: req.body.emaiL,
+      sectionID: req.body.sectionID,
+    });
+
+    User.update(updateUser)
+    return res.status(200).send();
+  } catch (error) {
+    return res.status
+      .status(500)
+      .json({ error: "Internal error during update user" });
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -244,4 +262,5 @@ module.exports = {
   getPrivilegeLevels,
   getAvailableSections,
   updatePassword,
+  updateUser,
 };
