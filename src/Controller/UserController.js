@@ -238,27 +238,32 @@ async function updateUser(req, res) {
   try {
     const userID = req.decoded.user_id;
 
-    const updateUser = {
+    const newUserInfo = {
       name: req.body.name,
       email: req.body.email,
-      sectionID: Number.parseInt(req.body.sectionID),
+      sectionID: Number.parseInt(req.body.section_id),
     };
 
-    if (!Number.isFinite(updateUser.sectionID)) {
-      return res.status(400).json({ error: "Invalid credentials departament" });
+    if (!Number.isFinite(newUserInfo.sectionID)) {
+      return res.status(400).json({ error: "invalid department id" });
     }
 
-    const section = await Section.findByPk(updateUser.sectionID);
-
+    const section = await Section.findByPk(newUserInfo.sectionID);
     if (!section) {
-      return res.status(404).json({ error: "Section not found" });
+      return res.status(404).json({ error: "department not found" });
     }
 
     const user = await User.findByPk(userID);
-    const updatedUser = await user.update(updateUser);
+
+    user.email = newUserInfo.email;
+    user.name = newUserInfo.name;
+    user.sectionID = newUserInfo.sectionID;
+
+    const updatedUser = await user.save();
     return res.status(200).json(updatedUser);
   } catch (error) {
-    return res.status.status(500).json({ error: "Internal error during update user" });
+    console.error(`could not update user: ${error}`);
+    return res.status(500).json({ error: "Internal error during update user" });
   }
 }
 
