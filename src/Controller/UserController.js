@@ -259,6 +259,8 @@ async function updateUser(req, res) {
     user.name = newUserInfo.name;
     user.sectionID = newUserInfo.sectionID;
 
+    user.addSection(newUserInfo.sectionID);
+
     const updatedUser = await user.save();
     return res.status(200).json(updatedUser);
   } catch (error) {
