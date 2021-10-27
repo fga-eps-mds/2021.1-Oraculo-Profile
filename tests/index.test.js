@@ -298,6 +298,19 @@ describe("Main test", () => {
 
     expect(res.statusCode).toEqual(400);
   });
+
+  it("POST /user/change-user - should not update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+        section_id: 500,
+      });
+
+    expect(res.statusCode).toEqual(404);
+  });
 });
 
 afterAll((done) => {
