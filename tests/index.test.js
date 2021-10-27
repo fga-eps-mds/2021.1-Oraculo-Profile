@@ -275,7 +275,7 @@ describe("Main test", () => {
     const res = await request(app)
       .post("/user/change-password")
       .set("x-access-token", adminToken)
-      .send({password: user1.password});
+      .send({ password: user1.password });
     expect(res.statusCode).toEqual(200);
   });
 
@@ -285,6 +285,18 @@ describe("Main test", () => {
       .set("x-access-token", adminToken)
       .send();
     expect(res.statusCode).toEqual(500);
+  });
+
+  it("POST /user/change-user - should not update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+      });
+
+    expect(res.statusCode).toEqual(400);
   });
 });
 
