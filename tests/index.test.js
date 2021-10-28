@@ -275,7 +275,7 @@ describe("Main test", () => {
     const res = await request(app)
       .post("/user/change-password")
       .set("x-access-token", adminToken)
-      .send({password: user1.password});
+      .send({ password: user1.password });
     expect(res.statusCode).toEqual(200);
   });
 
@@ -285,6 +285,59 @@ describe("Main test", () => {
       .set("x-access-token", adminToken)
       .send();
     expect(res.statusCode).toEqual(500);
+  });
+
+  it("POST /user/change-user - should not update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+      });
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it("POST /user/change-user - should not update user information (inexistent section)", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+        section_id: 500,
+      });
+
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it("POST /user/change-user - should update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toBeDefined();
+  });
+
+  it("POST /user/change-user - should not update user information (invalid field type)", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: null,
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toBeDefined();
   });
 });
 
