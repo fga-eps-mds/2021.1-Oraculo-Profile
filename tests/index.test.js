@@ -341,12 +341,12 @@ describe("Main test", () => {
   });
 
   it("GET /user/:id/info - should not return user info (invalid user id)", async () => {
+    const id=NaN;
     const res = await request(app)
-      .get("/user/-1/info")
+      .get(`/user/${id}/info`)
       .set("x-access-token", adminToken)
     
-    expect(res.statusCode).toEqual(400);
-    expect(res.body.error).toBeDefined();
+    expect(res.statusCode).toEqual(500);
   });
 
   it("GET /user/:id/info - should return all user info", async () => {
@@ -357,17 +357,6 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body).toBeDefined();
   });
-
-  //need login and get user token
-  // it("GET /user/:id/info - should return only user name", async () => {
-  //   const res = await request(app)
-  //     .get("/user/1/info")
-  //     .set("x-access-token", userToken)
-    
-  //   expect(res.statusCode).toEqual(200);
-  //   expect(res.body).toBeDefined();
-  // });
-
 
 });
 

@@ -275,7 +275,7 @@ async function getUserByID(req, res) {
     const userID = Number.parseInt(id);
 
     if (!Number.isFinite(userID)) {
-      return response.status(400).json({ error: "invalid user id" });
+      return response.status(500).json({ error: "invalid user id" });
     }
     const user = await User.findByPk(userID);
     const requesterLevel = await findUserLevelByID(req);
