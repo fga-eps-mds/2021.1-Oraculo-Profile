@@ -299,7 +299,7 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it("POST /user/change-user - should not update user information", async () => {
+  it("POST /user/change-user - should not update user information (inexistent section)", async () => {
     const res = await request(app)
       .post("/user/change-user")
       .set("x-access-token", adminToken)
@@ -310,6 +310,20 @@ describe("Main test", () => {
       });
 
     expect(res.statusCode).toEqual(404);
+  });
+
+  it("POST /user/change-user - should update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toBeDefined();
   });
 });
 
