@@ -277,10 +277,14 @@ async function getUserByID(req, res) {
     if (!Number.isFinite(userID)) {
       return response.status(400).json({ error: "invalid record id" });
     }
-    
-    console.log(userID);
     const user = await User.findByPk(userID);
-    return res.status(200).json({ user });
+    const requesterLevel = await findUserLevelByID(req);
+
+    if (requesterLevel.id != privilegeTypes.admin) {
+      return res.status(200).json(user.name);
+    } else {
+      return res.status(200).json({ user });
+    }
   } catch(error){
     console.log(` Couldn't find user: ${error}`);
     return res.status(500).json({message: "Internal error during search user"})
