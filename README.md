@@ -205,7 +205,3 @@ header: {
     "X-Access-Token": "token"
 }
 ```
-
-```
-
-```
