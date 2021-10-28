@@ -325,6 +325,20 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body).toBeDefined();
   });
+
+  it("POST /user/change-user - should not update user information (invalid field type)", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: null,
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toBeDefined();
+  });
 });
 
 afterAll((done) => {
