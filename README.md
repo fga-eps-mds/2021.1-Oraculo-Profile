@@ -182,6 +182,14 @@ Atualiza as informações do usuário atual (email, nome e departamento)
 }
 ```
 
+- Headers
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
 **POST: `/user/change-password`**
 
 Atualiza a senha do usuário atual (usuário que está logado)
@@ -190,4 +198,14 @@ Atualiza a senha do usuário atual (usuário que está logado)
 {
   "password": ""
 }
+```
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
+```
+
 ```
