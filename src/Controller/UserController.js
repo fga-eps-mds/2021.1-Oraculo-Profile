@@ -280,16 +280,15 @@ async function getUserByID(req, res) {
     const user = await User.findByPk(userID);
     const requesterLevel = await findUserLevelByID(req);
 
-    if (requesterLevel.id != privilegeTypes.admin) {
+    if (requesterLevel.id !== privilegeTypes.admin) {
       return res.status(200).json(user.name);
     } else {
       return res.status(200).json({ user });
     }
-  } catch(error){
+  } catch (error) {
     console.log(` Couldn't find user: ${error}`);
-    return res.status(500).json({message: "Internal error during search user"})
+    return res.status(500).json({ message: "Internal error during search user" });
   }
-  
 }
 
 module.exports = {
