@@ -13,6 +13,7 @@ router.get("/user/info", jwt.verifyJWT, UserController.getUserInfo);
 router.get("/departments", UserController.getAvailableDepartments);
 router.get("/levels", UserController.getPrivilegeLevels);
 router.get("/sections", UserController.getAvailableSections);
+router.get("/user/:id/info", jwt.verifyJWT, UserController.getUserByID);
 router.post("/user/change-user", jwt.verifyJWT, UserController.updateUser);
 
 module.exports = router;

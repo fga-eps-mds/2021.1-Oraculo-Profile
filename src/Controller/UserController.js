@@ -271,6 +271,28 @@ async function updateUser(req, res) {
   }
 }
 
+async function getUserByID(req, res) {
+  try {
+    const { id } = req.params;
+    const userID = Number.parseInt(id);
+
+    if (!Number.isFinite(userID)) {
+      return response.status(500).json({ error: "invalid user id" });
+    }
+    const user = await User.findByPk(userID);
+    const requesterLevel = await findUserLevelByID(req);
+
+    if (requesterLevel.id !== privilegeTypes.admin) {
+      return res.status(200).json({ name: user.name });
+    } else {
+      return res.status(200).json({ user });
+    }
+  } catch (error) {
+    console.log(` Couldn't find user: ${error}`);
+    return res.status(500).json({ message: "Internal error during search user" });
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -282,4 +304,5 @@ module.exports = {
   getAvailableSections,
   updatePassword,
   updateUser,
+  getUserByID,
 };
