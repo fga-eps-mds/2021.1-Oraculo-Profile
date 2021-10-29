@@ -218,19 +218,21 @@ async function getAvailableSections(req, res) {
 
 async function updatePassword(req, res) {
   try {
-    const user = User.findByPk(req.decoded.user_id);
+    const user = await User.findByPk(req.decoded.user_id);
     const newPassword = req.body.password;
 
     if (!newPassword) {
-      return res.status(500).json({ error: "Not insert password" });
+      return res.status(500).json({ error: "password not set" });
     }
 
-    user.password = hashPassword(newPassword);
+    user.password = await hashPassword(newPassword);
 
-    (await user).save();
-    return res.status(200).send("Password reset sucessfully.");
+    await user.save();
+
+    return res.status(200).json({ message: "password updated sucessfully" });
   } catch (error) {
-    return res.status(500).json({ error: "Internal error during update password" });
+    console.log(`could not update password: ${error}`);
+    return res.status(500).json({ error: "internal error during update password" });
   }
 }
 
