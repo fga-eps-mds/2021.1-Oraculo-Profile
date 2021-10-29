@@ -33,7 +33,7 @@ const user1 = {
   name: "Silva",
   email: "useroraculo1@email.com",
   password: "oraculo12345",
-  departmentID: 3,
+  departmentID: 8,
   level: 2,
   sectionID: 0,
 };
