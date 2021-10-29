@@ -281,7 +281,7 @@ async function getUserByID(req, res) {
     const requesterLevel = await findUserLevelByID(req);
 
     if (requesterLevel.id !== privilegeTypes.admin) {
-      return res.status(200).json(user.name);
+      return res.status(200).json({ name: user.name });
     } else {
       return res.status(200).json({ user });
     }
