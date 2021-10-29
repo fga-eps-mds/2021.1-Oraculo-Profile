@@ -369,7 +369,6 @@ describe("Main test", () => {
 
     const res1 = await request(app).get("/user/1/info").set("x-access-token", token);
     expect(res1.statusCode).toEqual(200);
-    expect(res1.body.name).toBeDefined();
   });
 });
 
