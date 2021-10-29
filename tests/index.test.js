@@ -341,23 +341,36 @@ describe("Main test", () => {
   });
 
   it("GET /user/:id/info - should not return user info (invalid user id)", async () => {
-    const id=NaN;
+    const id = NaN;
     const res = await request(app)
       .get(`/user/${id}/info`)
-      .set("x-access-token", adminToken)
-    
+      .set("x-access-token", adminToken);
+
     expect(res.statusCode).toEqual(500);
   });
 
   it("GET /user/:id/info - should return all user info", async () => {
-    const res = await request(app)
-      .get("/user/1/info")
-      .set("x-access-token", adminToken)
-    
+    const res = await request(app).get("/user/1/info").set("x-access-token", adminToken);
+
     expect(res.statusCode).toEqual(200);
     expect(res.body).toBeDefined();
   });
 
+  it("GET /user/:id/info - should not return all user info", async () => {
+    // login with a less privileged user
+    const res = await request(app)
+      .post("/login")
+      .send({ email: user1.email, password: user1.password });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.token).toBeDefined();
+
+    let token = res.body.token;
+
+    const res1 = await request(app).get("/user/1/info").set("x-access-token", token);
+    expect(res1.statusCode).toEqual(200);
+    expect(res1.body.name).toBeDefined();
+  });
 });
 
 afterAll((done) => {
