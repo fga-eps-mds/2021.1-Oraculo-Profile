@@ -169,3 +169,43 @@ Envie uma requisição nesse endpoint para obter a lista de seções existentes
   }
 ]
 ```
+
+**POST: `/user/change-user`**
+
+Atualiza as informações do usuário atual (email, nome e departamento)
+
+```json
+{
+  "name": "",
+  "email": "",
+  "section_id": ""
+}
+```
+
+- Headers
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
+**POST: `/user/change-password`**
+
+Atualiza a senha do usuário atual (usuário que está logado)
+
+```json
+{
+  "password": ""
+}
+```
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
+```
+
+```

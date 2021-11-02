@@ -218,19 +218,78 @@ async function getAvailableSections(req, res) {
 
 async function updatePassword(req, res) {
   try {
-    const user = User.findByPk(req.decoded.user_id);
+    const user = await User.findByPk(req.decoded.user_id);
     const newPassword = req.body.password;
 
     if (!newPassword) {
-      return res.status(500).json({ error: "Not insert password" });
+      return res.status(500).json({ error: "password not set" });
     }
 
-    user.password = hashPassword(newPassword);
+    user.password = await hashPassword(newPassword);
 
-    (await user).save();
-    return res.status(200).send("Password reset sucessfully.");
+    await user.save();
+
+    return res.status(200).json({ message: "password updated sucessfully" });
   } catch (error) {
-    return res.status(500).json({ error: "Internal error during update password" });
+    console.log(`could not update password: ${error}`);
+    return res.status(500).json({ error: "internal error during update password" });
+  }
+}
+
+async function updateUser(req, res) {
+  try {
+    const userID = req.decoded.user_id;
+
+    const newUserInfo = {
+      name: req.body.name,
+      email: req.body.email,
+      sectionID: Number.parseInt(req.body.section_id),
+    };
+
+    if (!Number.isFinite(newUserInfo.sectionID)) {
+      return res.status(400).json({ error: "invalid department id" });
+    }
+
+    const section = await Section.findByPk(newUserInfo.sectionID);
+    if (!section) {
+      return res.status(404).json({ error: "department not found" });
+    }
+
+    const user = await User.findByPk(userID);
+
+    user.email = newUserInfo.email;
+    user.name = newUserInfo.name;
+    user.sectionID = newUserInfo.sectionID;
+
+    user.addSection(newUserInfo.sectionID);
+
+    const updatedUser = await user.save();
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(`could not update user: ${error}`);
+    return res.status(500).json({ error: "Internal error during update user" });
+  }
+}
+
+async function getUserByID(req, res) {
+  try {
+    const { id } = req.params;
+    const userID = Number.parseInt(id);
+
+    if (!Number.isFinite(userID)) {
+      return response.status(500).json({ error: "invalid user id" });
+    }
+    const user = await User.findByPk(userID);
+    const requesterLevel = await findUserLevelByID(req);
+
+    if (requesterLevel.id !== privilegeTypes.admin) {
+      return res.status(200).json({ name: user.name });
+    } else {
+      return res.status(200).json({ user });
+    }
+  } catch (error) {
+    console.log(` Couldn't find user: ${error}`);
+    return res.status(500).json({ message: "Internal error during search user" });
   }
 }
 
@@ -244,4 +303,6 @@ module.exports = {
   getPrivilegeLevels,
   getAvailableSections,
   updatePassword,
+  updateUser,
+  getUserByID,
 };

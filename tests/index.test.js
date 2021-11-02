@@ -33,7 +33,7 @@ const user1 = {
   name: "Silva",
   email: "useroraculo1@email.com",
   password: "oraculo12345",
-  departmentID: 3,
+  departmentID: 8,
   level: 2,
   sectionID: 0,
 };
@@ -275,7 +275,7 @@ describe("Main test", () => {
     const res = await request(app)
       .post("/user/change-password")
       .set("x-access-token", adminToken)
-      .send({password: user1.password});
+      .send({ password: user1.password });
     expect(res.statusCode).toEqual(200);
   });
 
@@ -285,6 +285,90 @@ describe("Main test", () => {
       .set("x-access-token", adminToken)
       .send();
     expect(res.statusCode).toEqual(500);
+  });
+
+  it("POST /user/change-user - should not update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+      });
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it("POST /user/change-user - should not update user information (inexistent section)", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "mail",
+        section_id: 500,
+      });
+
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it("POST /user/change-user - should update user information", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toBeDefined();
+  });
+
+  it("POST /user/change-user - should not update user information (invalid field type)", async () => {
+    const res = await request(app)
+      .post("/user/change-user")
+      .set("x-access-token", adminToken)
+      .send({
+        name: null,
+        email: "test@mail.com",
+        section_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it("GET /user/:id/info - should not return user info (invalid user id)", async () => {
+    const id = NaN;
+    const res = await request(app)
+      .get(`/user/${id}/info`)
+      .set("x-access-token", adminToken);
+
+    expect(res.statusCode).toEqual(500);
+  });
+
+  it("GET /user/:id/info - should return all user info", async () => {
+    const res = await request(app).get("/user/1/info").set("x-access-token", adminToken);
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toBeDefined();
+  });
+
+  it("GET /user/:id/info - should not return all user info", async () => {
+    // login with a less privileged user
+    const res = await request(app)
+      .post("/login")
+      .send({ email: user1.email, password: user1.password });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.token).toBeDefined();
+
+    let token = res.body.token;
+
+    const res1 = await request(app).get("/user/1/info").set("x-access-token", token);
+    expect(res1.statusCode).toEqual(200);
   });
 });
 
