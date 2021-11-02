@@ -5,39 +5,46 @@ module.exports = {
     // Essa lista deverá estar em conformidade com a do microsserviço de profiles
     const departments = [
       {
-        name: "Gerência de identificação",
+        name: "Divisão Administrativa",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Unidade de inteligência",
+        name: "Divisão Biométrica Civil",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Gerência adjunta",
+        name: "Divisão Biométrica Criminal",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Divisão biométrica criminal",
+        name: "Divisão de Tecnologia, Pesquisa e Desenvolvimento",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Divisão de tecnologia, pesquisa e desenvolvimento",
+        name: "Gerência Adjunta",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Divisão administrativa",
+        name: "Gerência de Identificação",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: true,
       },
       {
-        name: "Divisão biométrica civil",
+        name: "Unidade de Inteligência",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: false,
       },
       {
         name: "none",
