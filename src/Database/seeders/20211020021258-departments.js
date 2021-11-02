@@ -50,6 +50,7 @@ module.exports = {
         name: "none",
         created_at: new Date(),
         updated_at: new Date(),
+        is_admin: false,
       },
     ];
 
