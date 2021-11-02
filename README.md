@@ -149,13 +149,30 @@ Resposta esperada:
 **GET: `/departments`**
 Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
 
-**GET: `/levels`**
-Envie uma requisição nesse endpoint para obter a lista de níveis de acesso existentes
-
 **GET: `/sections`**
 Envie uma requisição nesse endpoint para obter a lista de seções existentes
 
 - Formato de resposta padrão para as requisições anteriores:
+
+```json
+[
+  {
+    "id": 0,
+    "name": "",
+    "is_admin": true
+  },
+  {
+    "id": 0,
+    "name": "",
+    "is_admin": false
+  }
+]
+```
+
+**GET: `/levels`**
+Envie uma requisição nesse endpoint para obter a lista de níveis de acesso existentes
+
+- Resposta
 
 ```json
 [
