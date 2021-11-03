@@ -26,6 +26,32 @@ async function findUserLevelByID(req) {
   return level;
 }
 
+async function editSection(req, res) {
+  const { name, departmentID } = req.body;
+  const { id } = req.params;
+  console.log(req);
+  if (!name && !departmentID) {
+    return res.status(400).send({
+      error: "lacks of information to update section",
+    });
+  }
+
+  try {
+    const section = await Section.findByPk(id);
+    if(name) {
+      section.name = name;
+    }
+    if(departmentID) {
+      section.department_id = departmentID;
+    }
+    const updatedSection = await section.save();
+    return res.status(200).json(updatedSection);
+  } catch (error) {
+    console.log(`could not create section: ${error}`);
+    return res.status(500).json({ error: "internal error during register section" });
+  }
+}
+
 async function createSection(req, res) {
   const { name, departmentID } = req.body;
   if (!name || !departmentID) {
