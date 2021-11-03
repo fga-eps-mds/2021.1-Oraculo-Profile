@@ -26,6 +26,35 @@ async function findUserLevelByID(req) {
   return level;
 }
 
+async function createSection(req, res) {
+  const { name, departmentID } = req.body;
+  if (!name || !departmentID) {
+    return res.status(400).send({
+      error: "lacks of information to register section",
+    });
+  }
+
+  try {
+    const department = await Department.findOne({
+      where: { id: newUserInfo.departmentID },
+    });
+
+    if (!department) {
+      return res.status(400).send({ error: "invalid department" });
+    }
+
+    const newSection = await User.create({
+      name,
+      department_id: Number.parseInt(departmentID),
+    });
+
+    return res.status(200).send(newSection);
+  } catch (error) {
+    console.log(`could not create section: ${error}`);
+    return res.status(500).json({ error: "internal error during section register" });
+  }
+}
+
 async function createUser(req, res) {
   if (!req.body.name || !req.body.password || !req.body.email || !req.body.level) {
     return res.status(400).send({
@@ -305,4 +334,8 @@ module.exports = {
   updatePassword,
   updateUser,
   getUserByID,
+  createSection,
+  createDepartment,
+  editDepartment,
+  editSection
 };
