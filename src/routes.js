@@ -15,5 +15,9 @@ router.get("/levels", UserController.getPrivilegeLevels);
 router.get("/sections", UserController.getAvailableSections);
 router.get("/user/:id/info", jwt.verifyJWT, UserController.getUserByID);
 router.post("/user/change-user", jwt.verifyJWT, UserController.updateUser);
+router.post("/sections", UserController.createSection);
+router.post("/departments", UserController.createDepartment);
+router.post("/sections/change-section/:id", UserController.editSection);
+router.post("/departments/change-department/:id", UserController.editDepartment);
 
 module.exports = router;
