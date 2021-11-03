@@ -14,6 +14,7 @@ class Department extends Model {
   }
 
   static associate(models) {
+    this.hasMany(models.Section, { foreignKey: "department_id", as: "sections" });
     this.belongsToMany(models.User, {
       foreignKey: "department_id",
       through: "user_departments",
