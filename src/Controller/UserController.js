@@ -26,6 +26,26 @@ async function findUserLevelByID(req) {
   return level;
 }
 
+async function createDepartment(req, res) {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).send({
+      error: "lacks of information to register department",
+    });
+  }
+
+  try {
+    const newDepartment = await User.create({
+      name,
+    });
+
+    return res.status(200).send(newDepartment);
+  } catch (error) {
+    console.log(`could not create department: ${error}`);
+    return res.status(500).json({ error: "internal error during section department" });
+  }
+}
+
 async function editSection(req, res) {
   const { name, departmentID } = req.body;
   const { id } = req.params;
