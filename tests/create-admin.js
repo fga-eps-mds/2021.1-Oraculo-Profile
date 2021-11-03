@@ -12,7 +12,6 @@ const adminUser = {
   password: "admin1234",
   departmentID: 1,
   level: 1,
-  sectionID: 2,
 };
 
 async function createAdminUser() {
@@ -33,9 +32,7 @@ async function createAdminUser() {
     where: { id: adminUser.level },
   });
 
-  const section = await Section.findOne({
-    where: { id: adminUser.sectionID },
-  });
+  const section = await Section.getEmpty();
 
   if (!department || !level || !section) {
     console.error(`invalid information: ${department}, ${level}, ${section}`);
