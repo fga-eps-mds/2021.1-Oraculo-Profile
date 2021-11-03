@@ -46,10 +46,31 @@ async function createDepartment(req, res) {
   }
 }
 
+async function editDepartment(req, res) {
+  const { name } = req.body;
+  const { id } = req.params;
+
+  if (!name) {
+    return res.status(400).send({
+      error: "lacks of information to update department",
+    });
+  }
+
+  try {
+    const department = await Department.findByPk(id);
+    department.name = name;
+    const updatedDepartment = await department.save();
+    return res.status(200).json(updatedDepartment);
+  } catch (error) {
+    console.log(`could not create department: ${error}`);
+    return res.status(500).json({ error: "internal error during register department" });
+  }
+}
+
 async function editSection(req, res) {
   const { name, departmentID } = req.body;
   const { id } = req.params;
-  console.log(req);
+  
   if (!name && !departmentID) {
     return res.status(400).send({
       error: "lacks of information to update section",
