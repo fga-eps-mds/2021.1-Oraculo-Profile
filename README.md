@@ -226,3 +226,47 @@ header: {
 ```
 
 ```
+
+**POST `/sections`**
+
+Cria uma seção nova
+
+```json
+{
+  "name": ""
+}
+```
+
+**POST `/departments`**
+
+Cria um departamento novo
+
+```json
+{
+  "name": ""
+}
+```
+
+**POST `/sections/change-section/:id`**
+
+Edita o nome de uma seção
+
+**id** é o id da seção a ser editada
+
+```json
+{
+  "name": ""
+}
+```
+
+**POST `/departments/change-department/:id`**
+
+Edita o nome de um departamento
+
+**id** é o id do departamento a ser editado
+
+```json
+{
+  "name": ""
+}
+```

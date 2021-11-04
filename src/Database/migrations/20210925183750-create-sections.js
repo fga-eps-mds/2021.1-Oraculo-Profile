@@ -12,6 +12,7 @@ module.exports = {
       name: {
         type: Sequelize.TEXT,
         allowNull: false,
+        unique: true,
       },
       is_admin: {
         type: Sequelize.BOOLEAN,

@@ -183,37 +183,12 @@ async function getUserInfo(req, res) {
   }
 }
 
-async function getAvailableDepartments(req, res) {
-  const departments = await Department.findAll({
-    attributes: ["id", "name"],
-    where: {
-      name: {
-        [Op.not]: "none",
-      },
-    },
-  });
-  return res.status(200).json(departments);
-}
-
 async function getPrivilegeLevels(req, res) {
   const levels = await Level.findAll({
     attributes: ["id", "name"],
   });
 
   return res.status(200).json(levels);
-}
-
-async function getAvailableSections(req, res) {
-  Section.findAll({
-    attributes: ["id", "name"],
-    where: {
-      name: {
-        [Op.not]: "none",
-      },
-    },
-  }).then((sections) => {
-    return res.status(200).json(sections);
-  });
 }
 
 async function updatePassword(req, res) {
@@ -299,9 +274,7 @@ module.exports = {
   getUsersList,
   getAccessLevel,
   getUserInfo,
-  getAvailableDepartments,
   getPrivilegeLevels,
-  getAvailableSections,
   updatePassword,
   updateUser,
   getUserByID,
