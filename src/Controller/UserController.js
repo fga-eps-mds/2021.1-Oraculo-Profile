@@ -26,102 +26,6 @@ async function findUserLevelByID(req) {
   return level;
 }
 
-async function createDepartment(req, res) {
-  const { name } = req.body;
-  if (!name) {
-    return res.status(400).send({
-      error: "lacks of information to register department",
-    });
-  }
-
-  try {
-    const newDepartment = await User.create({
-      name,
-    });
-
-    return res.status(200).send(newDepartment);
-  } catch (error) {
-    console.log(`could not create department: ${error}`);
-    return res.status(500).json({ error: "internal error during section department" });
-  }
-}
-
-async function editDepartment(req, res) {
-  const { name } = req.body;
-  const { id } = req.params;
-
-  if (!name) {
-    return res.status(400).send({
-      error: "lacks of information to update department",
-    });
-  }
-
-  try {
-    const department = await Department.findByPk(id);
-    department.name = name;
-    const updatedDepartment = await department.save();
-    return res.status(200).json(updatedDepartment);
-  } catch (error) {
-    console.log(`could not create department: ${error}`);
-    return res.status(500).json({ error: "internal error during register department" });
-  }
-}
-
-async function editSection(req, res) {
-  const { name, departmentID } = req.body;
-  const { id } = req.params;
-  
-  if (!name && !departmentID) {
-    return res.status(400).send({
-      error: "lacks of information to update section",
-    });
-  }
-
-  try {
-    const section = await Section.findByPk(id);
-    if(name) {
-      section.name = name;
-    }
-    if(departmentID) {
-      section.department_id = departmentID;
-    }
-    const updatedSection = await section.save();
-    return res.status(200).json(updatedSection);
-  } catch (error) {
-    console.log(`could not create section: ${error}`);
-    return res.status(500).json({ error: "internal error during register section" });
-  }
-}
-
-async function createSection(req, res) {
-  const { name, departmentID } = req.body;
-  if (!name || !departmentID) {
-    return res.status(400).send({
-      error: "lacks of information to register section",
-    });
-  }
-
-  try {
-    const department = await Department.findOne({
-      where: { id: newUserInfo.departmentID },
-    });
-
-    if (!department) {
-      return res.status(400).send({ error: "invalid department" });
-    }
-
-    const newSection = await User.create({
-      name,
-      department_id: Number.parseInt(departmentID),
-    });
-
-    return res.status(200).send(newSection);
-  } catch (error) {
-    console.log(`could not create section: ${error}`);
-    return res.status(500).json({ error: "internal error during section register" });
-  }
-}
-
 async function createUser(req, res) {
   if (!req.body.name || !req.body.password || !req.body.email || !req.body.level) {
     return res.status(400).send({
@@ -279,37 +183,12 @@ async function getUserInfo(req, res) {
   }
 }
 
-async function getAvailableDepartments(req, res) {
-  const departments = await Department.findAll({
-    attributes: ["id", "name"],
-    where: {
-      name: {
-        [Op.not]: "none",
-      },
-    },
-  });
-  return res.status(200).json(departments);
-}
-
 async function getPrivilegeLevels(req, res) {
   const levels = await Level.findAll({
     attributes: ["id", "name"],
   });
 
   return res.status(200).json(levels);
-}
-
-async function getAvailableSections(req, res) {
-  Section.findAll({
-    attributes: ["id", "name"],
-    where: {
-      name: {
-        [Op.not]: "none",
-      },
-    },
-  }).then((sections) => {
-    return res.status(200).json(sections);
-  });
 }
 
 async function updatePassword(req, res) {
@@ -395,14 +274,8 @@ module.exports = {
   getUsersList,
   getAccessLevel,
   getUserInfo,
-  getAvailableDepartments,
   getPrivilegeLevels,
-  getAvailableSections,
   updatePassword,
   updateUser,
   getUserByID,
-  createSection,
-  createDepartment,
-  editDepartment,
-  editSection
 };
