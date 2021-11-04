@@ -303,6 +303,14 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
+  it("POST /departments - should not create a department  (empty name)", async () => {
+    const res = await request(app)
+      .post("/departments")
+      .set("x-access-token", adminToken)
+      .send({ name: "teste" });
+    expect(res.statusCode).toEqual(500);
+  });
+
   it("POST /departments/change-department/:id - should edit a department", async () => {
     const res = await request(app)
       .post("/departments/change-department/1")
@@ -324,6 +332,14 @@ describe("Main test", () => {
       .post("/departments/change-department/500")
       .set("x-access-token", adminToken)
       .send({ name: "teste1" });
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it("POST /departments/change-department/:id - should not edit a department (empty name)", async () => {
+    const res = await request(app)
+      .post("/departments/change-department/1")
+      .set("x-access-token", adminToken)
+      .send({ name: "" });
     expect(res.statusCode).toEqual(404);
   });
 
@@ -349,6 +365,14 @@ describe("Main test", () => {
       .set("x-access-token", adminToken)
       .send({ name: "teste1" });
     expect(res.statusCode).toEqual(404);
+  });
+
+  it("POST /sections/change-section/:id - should not edit a section (empty name)", async () => {
+    const res = await request(app)
+      .post("/sections/change-section/500")
+      .set("x-access-token", adminToken)
+      .send({ name: "" });
+    expect(res.statusCode).toEqual(400);
   });
 
   it("POST /user/change-password - should update a password", async () => {
