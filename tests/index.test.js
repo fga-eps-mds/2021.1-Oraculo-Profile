@@ -340,7 +340,7 @@ describe("Main test", () => {
       .post("/departments/change-department/1")
       .set("x-access-token", adminToken)
       .send({ name: "" });
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toEqual(400);
   });
 
   it("POST /sections/change-section/:id - should edit a section", async () => {
