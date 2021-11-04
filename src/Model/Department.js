@@ -1,10 +1,11 @@
-const { Model, Sequelize, Op } = require("sequelize");
+const { Model, Op, DataTypes } = require("sequelize");
 
 class Department extends Model {
   static init(db) {
     super.init(
       {
-        name: { type: Sequelize.TEXT },
+        name: { type: DataTypes.TEXT },
+        is_admin: { type: DataTypes.BOOLEAN },
       },
       {
         sequelize: db,
@@ -14,7 +15,6 @@ class Department extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.Section, { foreignKey: "department_id", as: "sections" });
     this.belongsToMany(models.User, {
       foreignKey: "department_id",
       through: "user_departments",

@@ -1,10 +1,11 @@
-const { Model, Sequelize, Op } = require("sequelize");
+const { Model, DataTypes, Op } = require("sequelize");
 
 class Section extends Model {
   static init(db) {
     super.init(
       {
-        name: { type: Sequelize.TEXT },
+        name: { type: DataTypes.TEXT },
+        is_admin: { type: DataTypes.BOOLEAN },
       },
       {
         sequelize: db,
