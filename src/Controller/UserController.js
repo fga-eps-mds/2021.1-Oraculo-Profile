@@ -152,7 +152,7 @@ async function getUsersList(req, res) {
   const level = user.levels[0];
 
   if (level.id === privilegeTypes.admin) {
-    const allUsers = await User.findAll({ attributes: ["email", "created_at"] });
+    const allUsers = await User.findAll({ attributes: ["name", "email", "created_at"] });
     return res.status(200).json(allUsers);
   }
 
