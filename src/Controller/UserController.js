@@ -254,7 +254,9 @@ async function getUserByID(req, res) {
     if (!Number.isFinite(userID)) {
       return response.status(500).json({ error: "invalid user id" });
     }
-    const user = await User.findByPk(userID);
+    const user = await User.findByPk(userID, {
+      include: [{ association: "sections", attributes: ["name"] }],
+    });
     const requesterLevel = await findUserLevelByID(req);
 
     if (requesterLevel.id !== privilegeTypes.admin) {
