@@ -288,7 +288,7 @@ async function getUserInfoByID(req, res) {
       return response.status(500).json({ error: "invalid user id" });
     }
     const user = await User.findByPk(userID, {
-      include: [{ association: "sections", attributes: ["name"] }],
+      include: ["departments", "levels", "sections"],
     });
     const requesterLevel = await findUserLevelByID(req);
 
