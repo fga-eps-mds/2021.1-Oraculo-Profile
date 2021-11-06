@@ -411,6 +411,7 @@ describe("Main test", () => {
         name: "test",
         email: "mail",
         section_id: 500,
+        department_id: 0,
       });
 
     expect(res.statusCode).toEqual(404);
@@ -424,6 +425,7 @@ describe("Main test", () => {
         name: "test",
         email: "test@mail.com",
         section_id: 2,
+        department_id: 0,
       });
 
     expect(res.statusCode).toEqual(200);
