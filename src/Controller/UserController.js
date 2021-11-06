@@ -101,9 +101,9 @@ async function createUser(req, res) {
       return res.status(500).send({ error: "could not insert user" });
     }
 
-    await newUser.addDepartment(department);
-    await newUser.addLevel(level);
-    await newUser.addSection(section);
+    await newUser.setDepartments([department]);
+    await newUser.setLevels([level]);
+    await newUser.setSections([section]);
 
     return res.status(200).send(newUser);
   } catch (error) {
@@ -152,7 +152,10 @@ async function getUsersList(req, res) {
   const level = user.levels[0];
 
   if (level.id === privilegeTypes.admin) {
-    const allUsers = await User.findAll({ attributes: ["name", "email", "created_at"] });
+    const allUsers = await User.findAll({
+      attributes: ["id", "name", "email", "created_at"],
+      include: ["departments", "levels", "sections"],
+    });
     return res.status(200).json(allUsers);
   }
 
@@ -254,8 +257,9 @@ async function editUser(req, res) {
     user.email = email;
     user.name = name;
 
-    await user.addSection(section);
-    await user.addDepartment(department);
+    await user.setSections([section]);
+    await user.setDepartments([department]);
+    await user.save();
 
     const updatedUser = await User.findByPk(userID, {
       include: ["departments", "levels", "sections"],
@@ -265,9 +269,9 @@ async function editUser(req, res) {
       id: updatedUser.id,
       name: updatedUser.name,
       email: updatedUser.email,
-      department,
+      department: updatedUser.departments,
       level: updatedUser.levels,
-      section,
+      section: updatedUser.sections,
     });
   } catch (error) {
     console.error(`could not update user: ${error}`);
