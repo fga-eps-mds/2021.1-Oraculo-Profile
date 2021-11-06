@@ -173,8 +173,7 @@ async function getUserInfo(req, res) {
     const userID = Number.parseInt(req.decoded.user_id, 10);
 
     const user = await User.findByPk(userID, {
-      attributes: ["id", "name", "email", "created_at", "updated_at"],
-      include: [{ association: "sections", attributes: ["id", "name"] }],
+      include: ["departments", "levels", "sections"],
     });
 
     return res.status(200).json(user);
