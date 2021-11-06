@@ -325,44 +325,50 @@ header: {
   "id": 0,
   "name": "",
   "email": "",
-  "department": {
-    "id": 1,
-    "name": "Divisão Administrativa",
-    "is_admin": true,
-    "createdAt": "2021-11-06T05:42:46.479Z",
-    "updatedAt": "2021-11-06T05:42:46.479Z",
-    "user_departments": {
-      "createdAt": "2021-11-06T05:42:47.229Z",
-      "updatedAt": "2021-11-06T05:42:47.229Z",
-      "user_id": 1,
-      "department_id": 1
+  "department": [
+    {
+      "id": 1,
+      "name": "Divisão Administrativa",
+      "is_admin": true,
+      "createdAt": "2021-11-06T05:42:46.479Z",
+      "updatedAt": "2021-11-06T05:42:46.479Z",
+      "user_departments": {
+        "createdAt": "2021-11-06T05:42:47.229Z",
+        "updatedAt": "2021-11-06T05:42:47.229Z",
+        "user_id": 1,
+        "department_id": 1
+      }
     }
-  },
-  "level": {
-    "id": 1,
-    "name": "admin",
-    "createdAt": "2021-11-06T05:42:46.502Z",
-    "updatedAt": "2021-11-06T05:42:46.502Z",
-    "user_levels": {
-      "createdAt": "2021-11-06T05:42:47.236Z",
-      "updatedAt": "2021-11-06T05:42:47.236Z",
-      "user_id": 1,
-      "level_id": 1
+  ],
+  "level": [
+    {
+      "id": 1,
+      "name": "admin",
+      "createdAt": "2021-11-06T05:42:46.502Z",
+      "updatedAt": "2021-11-06T05:42:46.502Z",
+      "user_levels": {
+        "createdAt": "2021-11-06T05:42:47.236Z",
+        "updatedAt": "2021-11-06T05:42:47.236Z",
+        "user_id": 1,
+        "level_id": 1
+      }
     }
-  },
-  "section": {
-    "id": 34,
-    "name": "none",
-    "is_admin": false,
-    "createdAt": "2021-11-06T05:42:46.492Z",
-    "updatedAt": "2021-11-06T05:42:46.492Z",
-    "user_sections": {
-      "createdAt": "2021-11-06T05:42:47.241Z",
-      "updatedAt": "2021-11-06T05:42:47.241Z",
-      "user_id": 1,
-      "section_id": 34
+  ],
+  "section": [
+    {
+      "id": 34,
+      "name": "none",
+      "is_admin": false,
+      "createdAt": "2021-11-06T05:42:46.492Z",
+      "updatedAt": "2021-11-06T05:42:46.492Z",
+      "user_sections": {
+        "createdAt": "2021-11-06T05:42:47.241Z",
+        "updatedAt": "2021-11-06T05:42:47.241Z",
+        "user_id": 1,
+        "section_id": 34
+      }
     }
-  }
+  ]
 }
 ```
 
