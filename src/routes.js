@@ -15,7 +15,7 @@ router.get("/user/info", jwt.verifyJWT, UserController.getUserInfo);
 router.get("/departments", DepartmentController.getAvailableDepartments);
 router.get("/levels", UserController.getPrivilegeLevels);
 router.get("/sections", SectionController.getAvailableSections);
-router.get("/user/:id/info", jwt.verifyJWT, UserController.getUserByID);
+router.get("/user/:id/info", jwt.verifyJWT, UserController.getUserInfoByID);
 router.post("/user/change-user", jwt.verifyJWT, UserController.updateUser);
 router.post("/sections", SectionController.createSection);
 router.post("/departments", DepartmentController.createDepartment);

@@ -246,7 +246,7 @@ async function updateUser(req, res) {
   }
 }
 
-async function getUserByID(req, res) {
+async function getUserInfoByID(req, res) {
   try {
     const { id } = req.params;
     const userID = Number.parseInt(id);
@@ -279,5 +279,5 @@ module.exports = {
   getPrivilegeLevels,
   updatePassword,
   updateUser,
-  getUserByID,
+  getUserInfoByID,
 };
