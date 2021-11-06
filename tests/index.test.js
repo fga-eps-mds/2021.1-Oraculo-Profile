@@ -442,7 +442,7 @@ describe("Main test", () => {
         section_id: 2,
       });
 
-    expect(res.statusCode).toEqual(500);
+    expect(res.statusCode).toEqual(400);
     expect(res.body.error).toBeDefined();
   });
 
