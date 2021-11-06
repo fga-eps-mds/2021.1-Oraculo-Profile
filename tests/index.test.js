@@ -432,6 +432,36 @@ describe("Main test", () => {
     expect(res.body).toBeDefined();
   });
 
+  it("POST /user/edit - should not update user information (department)", async () => {
+    const res = await request(app)
+      .post("/user/edit")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "test@mail.com",
+        section_id: 0,
+        department_id: 500,
+      });
+
+    expect(res.statusCode).toEqual(404);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it("POST /user/edit - should not update user information (invalid section and department)", async () => {
+    const res = await request(app)
+      .post("/user/edit")
+      .set("x-access-token", adminToken)
+      .send({
+        name: "test",
+        email: "test@mail.com",
+        section_id: 1,
+        department_id: 2,
+      });
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.error).toBeDefined();
+  });
+
   it("POST /user/edit - should not update user information (invalid field type)", async () => {
     const res = await request(app)
       .post("/user/edit")
