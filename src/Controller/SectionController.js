@@ -47,12 +47,7 @@ async function createSection(req, res) {
 
 async function getAvailableSections(req, res) {
   Section.findAll({
-    attributes: ["id", "name"],
-    where: {
-      name: {
-        [Op.not]: "none",
-      },
-    },
+    attributes: ["id", "name"]
   }).then((sections) => {
     return res.status(200).json(sections);
   });

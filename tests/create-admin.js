@@ -6,10 +6,14 @@ const { hashPassword } = require("../src/Utils/hash");
 const { initializeDatabase } = require("../src/Database");
 require("dotenv").config();
 
+const ADMIN_NAME = "Administrador do Sistema";
+const ADMIN_EMAIL = "admin@email.com";
+const ADMIN_PASSWORD = "admin1234";
+
 const adminUser = {
-  name: "administrador do sistema",
-  email: "admin@email.com",
-  password: "admin1234",
+  name: ADMIN_NAME,
+  email: ADMIN_EMAIL,
+  password: ADMIN_PASSWORD,
   departmentID: 1,
   level: 1,
 };

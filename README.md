@@ -29,13 +29,14 @@ npx jest --coverage --forceExit
 
 ## Como rodar?
 
-O arquivo .env possui configurações iniciais que podem ser alteradas de acordo com a necessidade. São elas:
+O arquivo `.env` possui configurações iniciais que podem ser alteradas de acordo com a necessidade. São elas:
 
 - SECRET: chave para criptografia das senhas
 - DB_USER: usuário de acesso ao banco de dados
 - DB_PASS: senha de acesso ao banco de dados
 - DB_NAME: nome da base de dados
 - DB_HOST: host da base de dados
+- DB_PORT: porta de conexão com o banco
 
 Veja o exemplo abaixo:
 
@@ -49,19 +50,64 @@ DB_HOST=db_users
 
 Para rodar a API é preciso usar os seguintes comandos usando o docker:
 
-Crie uma network para os containers da API, caso não exista:
+1 - Instale as dependências
 
 ```bash
-docker network create profiles-network
+yarn
 ```
 
-Suba o container com o comando:
+1.1 - Certifique-se de limpar containers já existentes
 
 ```bash
-docker-compose up
+yarn docker:clean
 ```
 
-A API estará rodando na [porta 8000](http://localhost:8000).
+2 - Configure as variáveis de ambiente editando o arquivo `.env`
+
+```
+SECRET=chavedesegredo
+DB_USER=api_user
+DB_PASS=api_password
+DB_NAME=api_database
+DB_HOST=db_users
+DB_PORT=8001
+```
+
+3 - Configure a variável de ambiente `DATABASE_URL`
+
+```bash
+export DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+```
+
+**Importante**: os valores das variáveis DB_USER, DB_PASS, DB_HOST, DB_PORT e DB_NAME são os mesmos
+do arquivo `.env` editado anteriormente.
+
+Se o arquivo `.env` estiver com os mesmos valores do passo anterior, então a `DATABASE_URL` deverá ser exportada
+da seguinte forma:
+
+```bash
+export DATABASE_URL=postgres://api_user:api_password@db_users:8001/api_database
+```
+
+3 - Suba o container
+
+```bash
+yarn all:prod
+```
+
+4 - Edite as credenciais do usuário admin no arquivo `tests/create-admin.js`
+
+- ADMIN_MAIL
+- ADMIN_NAME
+- ADMIN_PASSWORD
+
+5 - Crie o usuário admin no banco de dados
+
+```bash
+node tests/create-admin.js
+```
+
+A API estará rodando na porta especificada pela variável `DB_PORT` (padrão é a porta 8001)
 
 ## Rotas
 
@@ -142,15 +188,49 @@ Resposta esperada:
         "department_id": 1
       }
     }
+  ],
+  "levels": [
+    {
+      "id": 1,
+      "name": "admin",
+      "createdAt": "2021-11-06T04:56:08.981Z",
+      "updatedAt": "2021-11-06T04:56:08.981Z",
+      "user_levels": {
+        "createdAt": "2021-11-06T04:56:09.692Z",
+        "updatedAt": "2021-11-06T04:56:09.692Z",
+        "user_id": 1,
+        "level_id": 1
+      }
+    }
+  ],
+  "sections": [
+    {
+      "id": 34,
+      "name": "none",
+      "is_admin": false,
+      "createdAt": "2021-11-06T04:56:08.973Z",
+      "updatedAt": "2021-11-06T04:56:08.973Z",
+      "user_sections": {
+        "createdAt": "2021-11-06T04:56:09.697Z",
+        "updatedAt": "2021-11-06T04:56:09.697Z",
+        "user_id": 1,
+        "section_id": 34
+      }
+    }
   ]
 }
 ```
 
-**GET `/user/:id/info`**
+**GET: `/user/:id/info`**
+Rota para obter informações sobre um usuário específico a partir do seu ID
 
-Rota para obter as informações de um usuário pelo ID
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
 
-- Resposta
+Resposta esperada:
 
 ```json
 {
@@ -209,10 +289,14 @@ Rota para obter as informações de um usuário pelo ID
 }
 ```
 
+<<<<<<< HEAD
 **Importante** os arrays `departments`, `levels` e `sections` sempre irão conter apenas um objeto.
 
-**GET: `/departments`**
-Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
+=======
+
+> > > > > > > devel
+> > > > > > > **GET: `/departments`**
+> > > > > > > Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
 
 **GET: `/sections`**
 Envie uma requisição nesse endpoint para obter a lista de seções existentes
