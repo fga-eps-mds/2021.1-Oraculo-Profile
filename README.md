@@ -115,7 +115,7 @@ header: {
 ```
 
 **GET: `/user/info`**
-Rota para obter informações sobre um usuário específico
+Rota para obter informações sobre o usuário logado
 
 ```json
 header: {
@@ -145,6 +145,71 @@ Resposta esperada:
   ]
 }
 ```
+
+**GET `/user/:id/info`**
+
+Rota para obter as informações de um usuário pelo ID
+
+- Resposta
+
+```json
+{
+  "user": {
+    "id": 2,
+    "name": "administrador",
+    "email": "admin1@email.com",
+    "password": "",
+    "createdAt": "2021-11-06T15:54:14.461Z",
+    "updatedAt": "2021-11-06T15:54:14.461Z",
+    "departments": [
+      {
+        "id": 8,
+        "name": "none",
+        "is_admin": false,
+        "createdAt": "2021-11-06T15:53:17.897Z",
+        "updatedAt": "2021-11-06T15:53:17.897Z",
+        "user_departments": {
+          "createdAt": "2021-11-06T15:54:14.473Z",
+          "updatedAt": "2021-11-06T15:54:14.473Z",
+          "user_id": 2,
+          "department_id": 8
+        }
+      }
+    ],
+    "levels": [
+      {
+        "id": 2,
+        "name": "common",
+        "createdAt": "2021-11-06T15:53:17.933Z",
+        "updatedAt": "2021-11-06T15:53:17.933Z",
+        "user_levels": {
+          "createdAt": "2021-11-06T15:54:14.479Z",
+          "updatedAt": "2021-11-06T15:54:14.479Z",
+          "user_id": 2,
+          "level_id": 2
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": 8,
+        "name": "Seção de Comparação Facial de Imagens",
+        "is_admin": false,
+        "createdAt": "2021-11-06T15:53:17.920Z",
+        "updatedAt": "2021-11-06T15:53:17.920Z",
+        "user_sections": {
+          "createdAt": "2021-11-06T15:54:14.484Z",
+          "updatedAt": "2021-11-06T15:54:14.484Z",
+          "user_id": 2,
+          "section_id": 8
+        }
+      }
+    ]
+  }
+}
+```
+
+**Importante** os arrays `departments`, `levels` e `sections` sempre irão conter apenas um objeto.
 
 **GET: `/departments`**
 Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
