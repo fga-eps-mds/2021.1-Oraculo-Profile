@@ -146,6 +146,41 @@ Resposta esperada:
 }
 ```
 
+**GET: `/user/:id/info`**
+Rota para obter informações sobre um usuário específico a partir do seu ID
+
+```json
+header: {
+    "X-Access-Token": "token"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "user": {
+    "id": 1,
+    "name": "",
+    "email": "",
+    "password": "",
+    "createdAt": "",
+    "updatedAt": "",
+    "sections": [
+      {
+        "name": "",
+        "user_sections": {
+          "createdAt": "",
+          "updatedAt": "",
+          "user_id": 1,
+          "section_id": 1
+        }
+      }
+    ]
+  }
+}
+```
+
 **GET: `/departments`**
 Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
 
