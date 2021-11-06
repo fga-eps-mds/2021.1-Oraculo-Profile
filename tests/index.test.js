@@ -391,9 +391,9 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(500);
   });
 
-  it("POST /user/change-user - should not update user information", async () => {
+  it("POST /user/edit - should not update user information", async () => {
     const res = await request(app)
-      .post("/user/change-user")
+      .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
@@ -403,9 +403,9 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it("POST /user/change-user - should not update user information (inexistent section)", async () => {
+  it("POST /user/edit - should not update user information (inexistent section)", async () => {
     const res = await request(app)
-      .post("/user/change-user")
+      .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
@@ -416,9 +416,9 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(404);
   });
 
-  it("POST /user/change-user - should update user information", async () => {
+  it("POST /user/edit - should update user information", async () => {
     const res = await request(app)
-      .post("/user/change-user")
+      .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
@@ -430,9 +430,9 @@ describe("Main test", () => {
     expect(res.body).toBeDefined();
   });
 
-  it("POST /user/change-user - should not update user information (invalid field type)", async () => {
+  it("POST /user/edit - should not update user information (invalid field type)", async () => {
     const res = await request(app)
-      .post("/user/change-user")
+      .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: null,
