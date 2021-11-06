@@ -101,9 +101,9 @@ async function createUser(req, res) {
       return res.status(500).send({ error: "could not insert user" });
     }
 
-    await newUser.addDepartment(department);
-    await newUser.addLevel(level);
-    await newUser.addSection(section);
+    await newUser.setDepartments([department]);
+    await newUser.setLevels([level]);
+    await newUser.setSections([section]);
 
     return res.status(200).send(newUser);
   } catch (error) {
@@ -152,7 +152,10 @@ async function getUsersList(req, res) {
   const level = user.levels[0];
 
   if (level.id === privilegeTypes.admin) {
-    const allUsers = await User.findAll({ attributes: ["name", "email", "created_at"] });
+    const allUsers = await User.findAll({
+      attributes: ["id", "name", "email", "created_at"],
+      include: ["departments", "levels", "sections"],
+    });
     return res.status(200).json(allUsers);
   }
 
@@ -210,35 +213,66 @@ async function updatePassword(req, res) {
   }
 }
 
-async function updateUser(req, res) {
+async function editUser(req, res) {
+  const { name, email, section_id, department_id } = req.body;
+  const sectionID = Number.parseInt(section_id);
+  const departmentID = Number.parseInt(department_id);
+
   try {
     const userID = req.decoded.user_id;
 
-    const newUserInfo = {
-      name: req.body.name,
-      email: req.body.email,
-      sectionID: Number.parseInt(req.body.section_id),
-    };
-
-    if (!Number.isFinite(newUserInfo.sectionID)) {
-      return res.status(400).json({ error: "invalid department id" });
+    if (!Number.isFinite(sectionID) || !Number.isFinite(departmentID)) {
+      return res.status(400).json({ error: "invalid department or section id" });
     }
 
-    const section = await Section.findByPk(newUserInfo.sectionID);
+    let bShouldGetEmptyDepartment;
+
+    // Verifica se o departamento "none" precisa ser obtido
+    if (sectionID === 0 && departmentID > 0) {
+      bShouldGetEmptyDepartment = false;
+    } else if (sectionID > 0 && departmentID === 0) {
+      bShouldGetEmptyDepartment = true;
+    } else {
+      return res.status(400).json({ error: "invalid values for section and department" });
+    }
+
+    const section = bShouldGetEmptyDepartment
+      ? await Section.findByPk(sectionID)
+      : await Section.getEmpty();
+
     if (!section) {
+      return res.status(404).json({ error: "section not found" });
+    }
+
+    const department = bShouldGetEmptyDepartment
+      ? await Department.getEmpty()
+      : await Department.findByPk(departmentID);
+
+    if (!department) {
       return res.status(404).json({ error: "department not found" });
     }
 
     const user = await User.findByPk(userID);
 
-    user.email = newUserInfo.email;
-    user.name = newUserInfo.name;
-    user.sectionID = newUserInfo.sectionID;
+    user.email = email;
+    user.name = name;
 
-    user.addSection(newUserInfo.sectionID);
+    await user.setSections([section]);
+    await user.setDepartments([department]);
+    await user.save();
 
-    const updatedUser = await user.save();
-    return res.status(200).json(updatedUser);
+    const updatedUser = await User.findByPk(userID, {
+      include: ["departments", "levels", "sections"],
+    });
+
+    return res.status(200).json({
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      department: updatedUser.departments,
+      level: updatedUser.levels,
+      section: updatedUser.sections,
+    });
   } catch (error) {
     console.error(`could not update user: ${error}`);
     return res.status(500).json({ error: "Internal error during update user" });
@@ -277,6 +311,6 @@ module.exports = {
   getUserInfo,
   getPrivilegeLevels,
   updatePassword,
-  updateUser,
+  editUser,
   getUserInfoByID,
 };
