@@ -289,31 +289,41 @@ Resposta esperada:
 }
 ```
 
-<<<<<<< HEAD
+
 **Importante** os arrays `departments`, `levels` e `sections` sempre irão conter apenas um objeto.
 
-=======
+**GET: `/departments`**
+Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
 
-> > > > > > > devel
-> > > > > > > **GET: `/departments`**
-> > > > > > > Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
+* Resposta
+
+```json
+[
+  {
+    "id": 1,
+    "name": ""
+  },
+  {
+    "id": 2,
+    "name": ""
+  }
+]
+```
 
 **GET: `/sections`**
 Envie uma requisição nesse endpoint para obter a lista de seções existentes
 
-- Formato de resposta padrão para as requisições anteriores:
+* Resposta
 
 ```json
 [
   {
     "id": 0,
     "name": "",
-    "is_admin": true
   },
   {
     "id": 0,
     "name": "",
-    "is_admin": false
   }
 ]
 ```
