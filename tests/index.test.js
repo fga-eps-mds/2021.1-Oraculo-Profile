@@ -8,7 +8,6 @@ const adminUser = {
   password: "admin1234",
   departmentID: 1,
   level: 1,
-  sectionID: 2,
 };
 
 const userInvalidInformation = {
@@ -17,7 +16,6 @@ const userInvalidInformation = {
   password: "password",
   departmentID: -1,
   level: 100,
-  sectionID: 3,
 };
 
 const user = {
@@ -26,7 +24,6 @@ const user = {
   password: "oraculo123",
   departmentID: 0,
   level: 2,
-  sectionID: 3,
 };
 
 const user1 = {
@@ -35,7 +32,6 @@ const user1 = {
   password: "oraculo12345",
   departmentID: 8,
   level: 2,
-  sectionID: 0,
 };
 
 const anotherAdmin = {
@@ -44,16 +40,13 @@ const anotherAdmin = {
   password: "admin1234",
   departmentID: 4,
   level: 1,
-  sectionID: 0,
 };
 
 const userInvalidInformation1 = {
   name: "Invalid User",
   email: "invalid@gmail.com",
   password: "admin1234",
-  departmentID: 0,
   level: 1,
-  sectionID: 0,
 };
 
 describe("Sub Test", () => {
@@ -153,7 +146,7 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  it("POST /register - should not create user (invalid section and department", async () => {
+  it("POST /register - should not create user (invalid department", async () => {
     const res = await request(app)
       .post("/register")
       .set("x-access-token", adminToken)
@@ -350,15 +343,14 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it("POST /user/edit - should not update user information (inexistent section)", async () => {
+  it("POST /user/edit - should not update user information (inexistent department)", async () => {
     const res = await request(app)
       .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
         email: "mail",
-        section_id: 500,
-        department_id: 0,
+        department_id: 500,
       });
 
     expect(res.statusCode).toEqual(404);
@@ -371,7 +363,6 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 2,
         department_id: 0,
       });
 
@@ -386,7 +377,6 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 0,
         department_id: 500,
       });
 
@@ -394,15 +384,14 @@ describe("Main test", () => {
     expect(res.body.error).toBeDefined();
   });
 
-  it("POST /user/edit - should not update user information (invalid section and department)", async () => {
+  it("POST /user/edit - should not update user information (invalid department)", async () => {
     const res = await request(app)
       .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 1,
-        department_id: 2,
+        department_id: -1,
       });
 
     expect(res.statusCode).toEqual(400);
@@ -416,7 +405,7 @@ describe("Main test", () => {
       .send({
         name: null,
         email: "test@mail.com",
-        section_id: 2,
+        department_id: -1,
       });
 
     expect(res.statusCode).toEqual(400);
