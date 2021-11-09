@@ -2,7 +2,6 @@ const { User } = require("../Model/User");
 const { Sequelize } = require("sequelize");
 const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
-const { Section } = require("../Model/Section");
 require("dotenv").config();
 
 const { PROD, DATABASE_URL } = process.env;
@@ -53,12 +52,10 @@ async function setupModels(db) {
   User.init(db);
   Department.init(db);
   Level.init(db);
-  Section.init(db);
 
   User.associate(db.models);
   Department.associate(db.models);
   Level.associate(db.models);
-  Section.associate(db.models);
 }
 
 async function setupSequelize() {
