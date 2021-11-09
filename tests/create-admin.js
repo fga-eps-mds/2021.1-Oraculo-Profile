@@ -1,7 +1,6 @@
 const { User } = require("../src/Model/User");
 const { Department } = require("../src/Model/Department");
 const { Level } = require("../src/Model/Level");
-const { Section } = require("../src/Model/Section");
 const { hashPassword } = require("../src/Utils/hash");
 const { initializeDatabase } = require("../src/Database");
 require("dotenv").config();
@@ -36,10 +35,8 @@ async function createAdminUser() {
     where: { id: adminUser.level },
   });
 
-  const section = await Section.getEmpty();
-
-  if (!department || !level || !section) {
-    console.error(`invalid information: ${department}, ${level}, ${section}`);
+  if (!department || !level) {
+    console.error(`invalid information: ${department}, ${level}`);
     process.exit(1);
   }
 
@@ -57,7 +54,6 @@ async function createAdminUser() {
 
     await newUser.addDepartment(department);
     await newUser.addLevel(level);
-    await newUser.addSection(section);
 
     console.log(`created user: ${JSON.stringify(newUser)}`);
     return Promise.resolve();
