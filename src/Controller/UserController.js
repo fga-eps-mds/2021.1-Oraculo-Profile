@@ -1,7 +1,6 @@
 const { User } = require("../Model/User");
 const { Department } = require("../Model/Department");
 const { Level } = require("../Model/Level");
-const { Section } = require("../Model/Section");
 const { hashPassword } = require("../Utils/hash");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
@@ -51,10 +50,9 @@ async function createUser(req, res) {
       email: req.body.email,
       departmentID: Number.parseInt(req.body.departmentID),
       levelID: Number.parseInt(req.body.level),
-      sectionID: Number.parseInt(req.body.sectionID),
     };
 
-    if (newUserInfo.departmentID === 0 && newUserInfo.sectionID > 0) {
+    if (newUserInfo.departmentID === 0) {
       const emptyDepartment = await Department.getEmpty();
 
       // user is not admin
@@ -62,15 +60,12 @@ async function createUser(req, res) {
 
       // all users are inserted to high level department by default
       newUserInfo.departmentID = emptyDepartment.id;
-    } else if (newUserInfo.sectionID === 0 && newUserInfo.departmentID > 0) {
-      const emptySection = await Section.getEmpty();
-
+    } else if (newUserInfo.departmentID > 0) {
       newUserInfo.levelID = privilegeTypes.admin;
-      newUserInfo.sectionID = emptySection.id;
     } else {
       return res
         .status(400)
-        .json({ error: "invalid values for department ID or sectionID" });
+        .json({ error: "invalid values for department" });
     }
 
     // Search for user department and level
@@ -82,11 +77,9 @@ async function createUser(req, res) {
       where: { id: newUserInfo.levelID },
     });
 
-    const section = await Section.findOne({ where: { id: newUserInfo.sectionID } });
     if (
       (!department && newUserInfo.levelID === privilegeTypes.admin) ||
-      !level ||
-      !section
+      !level
     ) {
       return res.status(400).send({ error: "invalid user information provided" });
     }
@@ -103,7 +96,6 @@ async function createUser(req, res) {
 
     await newUser.setDepartments([department]);
     await newUser.setLevels([level]);
-    await newUser.setSections([section]);
 
     return res.status(200).send(newUser);
   } catch (error) {
@@ -154,7 +146,7 @@ async function getUsersList(req, res) {
   if (level.id === privilegeTypes.admin) {
     const allUsers = await User.findAll({
       attributes: ["id", "name", "email", "created_at"],
-      include: ["departments", "levels", "sections"],
+      include: ["departments", "levels"],
     });
     return res.status(200).json(allUsers);
   }
@@ -176,7 +168,7 @@ async function getUserInfo(req, res) {
     const userID = Number.parseInt(req.decoded.user_id, 10);
 
     const user = await User.findByPk(userID, {
-      include: ["departments", "levels", "sections"],
+      include: ["departments", "levels"],
     });
 
     return res.status(200).json(user);
@@ -214,34 +206,25 @@ async function updatePassword(req, res) {
 }
 
 async function editUser(req, res) {
-  const { name, email, section_id, department_id } = req.body;
-  const sectionID = Number.parseInt(section_id);
+  const { name, email, department_id } = req.body;
   const departmentID = Number.parseInt(department_id);
 
   try {
     const userID = req.decoded.user_id;
 
-    if (!Number.isFinite(sectionID) || !Number.isFinite(departmentID)) {
-      return res.status(400).json({ error: "invalid department or section id" });
+    if (!Number.isFinite(departmentID)) {
+      return res.status(400).json({ error: "invalid department id" });
     }
 
     let bShouldGetEmptyDepartment;
 
     // Verifica se o departamento "none" precisa ser obtido
-    if (sectionID === 0 && departmentID > 0) {
+    if (departmentID > 0) {
       bShouldGetEmptyDepartment = false;
-    } else if (sectionID > 0 && departmentID === 0) {
+    } else if (departmentID === 0) {
       bShouldGetEmptyDepartment = true;
     } else {
-      return res.status(400).json({ error: "invalid values for section and department" });
-    }
-
-    const section = bShouldGetEmptyDepartment
-      ? await Section.findByPk(sectionID)
-      : await Section.getEmpty();
-
-    if (!section) {
-      return res.status(404).json({ error: "section not found" });
+      return res.status(400).json({ error: "invalid values for department" });
     }
 
     const department = bShouldGetEmptyDepartment
@@ -257,12 +240,11 @@ async function editUser(req, res) {
     user.email = email;
     user.name = name;
 
-    await user.setSections([section]);
     await user.setDepartments([department]);
     await user.save();
 
     const updatedUser = await User.findByPk(userID, {
-      include: ["departments", "levels", "sections"],
+      include: ["departments", "levels"],
     });
 
     return res.status(200).json({
@@ -271,7 +253,6 @@ async function editUser(req, res) {
       email: updatedUser.email,
       department: updatedUser.departments,
       level: updatedUser.levels,
-      section: updatedUser.sections,
     });
   } catch (error) {
     console.error(`could not update user: ${error}`);
@@ -288,7 +269,7 @@ async function getUserInfoByID(req, res) {
       return response.status(500).json({ error: "invalid user id" });
     }
     const user = await User.findByPk(userID, {
-      include: ["departments", "levels", "sections"],
+      include: ["departments", "levels"],
     });
     const requesterLevel = await findUserLevelByID(req);
 
