@@ -8,7 +8,6 @@ const adminUser = {
   password: "admin1234",
   departmentID: 1,
   level: 1,
-  sectionID: 2,
 };
 
 const userInvalidInformation = {
@@ -17,16 +16,14 @@ const userInvalidInformation = {
   password: "password",
   departmentID: -1,
   level: 100,
-  sectionID: 3,
 };
 
 const user = {
   name: "Jane",
   email: "useroraculo@email.com",
   password: "oraculo123",
-  departmentID: 0,
+  departmentID: 1,
   level: 2,
-  sectionID: 3,
 };
 
 const user1 = {
@@ -35,7 +32,6 @@ const user1 = {
   password: "oraculo12345",
   departmentID: 8,
   level: 2,
-  sectionID: 0,
 };
 
 const anotherAdmin = {
@@ -44,16 +40,13 @@ const anotherAdmin = {
   password: "admin1234",
   departmentID: 4,
   level: 1,
-  sectionID: 0,
 };
 
 const userInvalidInformation1 = {
   name: "Invalid User",
   email: "invalid@gmail.com",
   password: "admin1234",
-  departmentID: 0,
   level: 1,
-  sectionID: 0,
 };
 
 describe("Sub Test", () => {
@@ -153,13 +146,13 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  it("POST /register - should not create user (invalid section and department", async () => {
+  it("POST /register - should not create user (invalid department", async () => {
     const res = await request(app)
       .post("/register")
       .set("x-access-token", adminToken)
       .send(userInvalidInformation1);
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(500);
   });
 
   it("POST /login - should login", async () => {
@@ -261,30 +254,9 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(200);
   });
 
-  it("GET /sections - should return a list of all available sections", async () => {
-    const res = await request(app).get("/sections");
-    expect(res.statusCode).toEqual(200);
-  });
-
   it("GET /levels - should return a list of all available user levels", async () => {
     const res = await request(app).get("/levels");
     expect(res.statusCode).toEqual(200);
-  });
-
-  it("POST /sections - should create a section", async () => {
-    const res = await request(app)
-      .post("/sections")
-      .set("x-access-token", adminToken)
-      .send({ name: "teste" });
-    expect(res.statusCode).toEqual(201);
-  });
-
-  it("POST /sections - should not create a section", async () => {
-    const res = await request(app)
-      .post("/sections")
-      .set("x-access-token", adminToken)
-      .send({});
-    expect(res.statusCode).toEqual(400);
   });
 
   it("POST /departments - should create a department", async () => {
@@ -343,38 +315,6 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it("POST /sections/change-section/:id - should edit a section", async () => {
-    const res = await request(app)
-      .post("/sections/change-section/1")
-      .set("x-access-token", adminToken)
-      .send({ name: "teste1" });
-    expect(res.statusCode).toEqual(200);
-  });
-
-  it("POST /sections/change-section/:id - should not edit a section", async () => {
-    const res = await request(app)
-      .post("/sections/change-section/a")
-      .set("x-access-token", adminToken)
-      .send({ name: "valid" });
-    expect(res.statusCode).toEqual(500);
-  });
-
-  it("POST /sections/change-section/:id - should not edit a section (invalid id)", async () => {
-    const res = await request(app)
-      .post("/sections/change-section/500")
-      .set("x-access-token", adminToken)
-      .send({ name: "teste1" });
-    expect(res.statusCode).toEqual(404);
-  });
-
-  it("POST /sections/change-section/:id - should not edit a section (empty name)", async () => {
-    const res = await request(app)
-      .post("/sections/change-section/500")
-      .set("x-access-token", adminToken)
-      .send({ name: "" });
-    expect(res.statusCode).toEqual(400);
-  });
-
   it("POST /user/change-password - should update a password", async () => {
     const res = await request(app)
       .post("/user/change-password")
@@ -403,15 +343,14 @@ describe("Main test", () => {
     expect(res.statusCode).toEqual(400);
   });
 
-  it("POST /user/edit - should not update user information (inexistent section)", async () => {
+  it("POST /user/edit - should not update user information (inexistent department)", async () => {
     const res = await request(app)
       .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
         email: "mail",
-        section_id: 500,
-        department_id: 0,
+        department_id: 500,
       });
 
     expect(res.statusCode).toEqual(404);
@@ -424,8 +363,7 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 2,
-        department_id: 0,
+        department_id: 1,
       });
 
     expect(res.statusCode).toEqual(200);
@@ -439,7 +377,6 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 0,
         department_id: 500,
       });
 
@@ -447,18 +384,17 @@ describe("Main test", () => {
     expect(res.body.error).toBeDefined();
   });
 
-  it("POST /user/edit - should not update user information (invalid section and department)", async () => {
+  it("POST /user/edit - should not update user information (invalid department)", async () => {
     const res = await request(app)
       .post("/user/edit")
       .set("x-access-token", adminToken)
       .send({
         name: "test",
         email: "test@mail.com",
-        section_id: 1,
-        department_id: 2,
+        department_id: 500,
       });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body.error).toBeDefined();
   });
 
@@ -469,10 +405,10 @@ describe("Main test", () => {
       .send({
         name: null,
         email: "test@mail.com",
-        section_id: 2,
+        department_id: 500,
       });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body.error).toBeDefined();
   });
 
