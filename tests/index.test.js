@@ -22,7 +22,7 @@ const user = {
   name: "Jane",
   email: "useroraculo@email.com",
   password: "oraculo123",
-  departmentID: 0,
+  departmentID: 1,
   level: 2,
 };
 
@@ -152,7 +152,7 @@ describe("Main test", () => {
       .set("x-access-token", adminToken)
       .send(userInvalidInformation1);
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(500);
   });
 
   it("POST /login - should login", async () => {
@@ -363,7 +363,7 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        department_id: 0,
+        department_id: 1,
       });
 
     expect(res.statusCode).toEqual(200);
@@ -391,10 +391,10 @@ describe("Main test", () => {
       .send({
         name: "test",
         email: "test@mail.com",
-        department_id: -1,
+        department_id: 500,
       });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body.error).toBeDefined();
   });
 
@@ -405,10 +405,10 @@ describe("Main test", () => {
       .send({
         name: null,
         email: "test@mail.com",
-        department_id: -1,
+        department_id: 500,
       });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body.error).toBeDefined();
   });
 
