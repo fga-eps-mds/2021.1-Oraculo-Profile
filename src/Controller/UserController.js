@@ -26,7 +26,12 @@ async function findUserLevelByID(req) {
 }
 
 async function createUser(req, res) {
-  if (!req.body.name || !req.body.password || !req.body.email || !req.body.level) {
+  if (
+    !req.body.name ||
+    !req.body.password ||
+    !req.body.email ||
+    !req.body.level
+  ) {
     return res.status(400).send({
       error: "lacks of information to register user",
     });
@@ -52,22 +57,6 @@ async function createUser(req, res) {
       levelID: Number.parseInt(req.body.level),
     };
 
-    if (newUserInfo.departmentID === 0) {
-      const emptyDepartment = await Department.getEmpty();
-
-      // user is not admin
-      newUserInfo.levelID = privilegeTypes.common;
-
-      // all users are inserted to high level department by default
-      newUserInfo.departmentID = emptyDepartment.id;
-    } else if (newUserInfo.departmentID > 0) {
-      newUserInfo.levelID = privilegeTypes.admin;
-    } else {
-      return res
-        .status(400)
-        .json({ error: "invalid values for department" });
-    }
-
     // Search for user department and level
     const department = await Department.findOne({
       where: { id: newUserInfo.departmentID },
@@ -81,7 +70,9 @@ async function createUser(req, res) {
       (!department && newUserInfo.levelID === privilegeTypes.admin) ||
       !level
     ) {
-      return res.status(400).send({ error: "invalid user information provided" });
+      return res
+        .status(400)
+        .send({ error: "invalid user information provided" });
     }
 
     const newUser = await User.create({
@@ -100,7 +91,9 @@ async function createUser(req, res) {
     return res.status(200).send(newUser);
   } catch (error) {
     console.log(`could not create user: ${error}`);
-    return res.status(500).json({ error: "internal error during user register" });
+    return res
+      .status(500)
+      .json({ error: "internal error during user register" });
   }
 }
 
@@ -151,7 +144,9 @@ async function getUsersList(req, res) {
     return res.status(200).json(allUsers);
   }
 
-  return res.status(401).json({ error: "you don't have permissions to list all users" });
+  return res
+    .status(401)
+    .json({ error: "you don't have permissions to list all users" });
 }
 
 async function getAccessLevel(req, res) {
@@ -201,7 +196,9 @@ async function updatePassword(req, res) {
     return res.status(200).json({ message: "password updated sucessfully" });
   } catch (error) {
     console.log(`could not update password: ${error}`);
-    return res.status(500).json({ error: "internal error during update password" });
+    return res
+      .status(500)
+      .json({ error: "internal error during update password" });
   }
 }
 
@@ -216,20 +213,7 @@ async function editUser(req, res) {
       return res.status(400).json({ error: "invalid department id" });
     }
 
-    let bShouldGetEmptyDepartment;
-
-    // Verifica se o departamento "none" precisa ser obtido
-    if (departmentID > 0) {
-      bShouldGetEmptyDepartment = false;
-    } else if (departmentID === 0) {
-      bShouldGetEmptyDepartment = true;
-    } else {
-      return res.status(400).json({ error: "invalid values for department" });
-    }
-
-    const department = bShouldGetEmptyDepartment
-      ? await Department.getEmpty()
-      : await Department.findByPk(departmentID);
+    const department = await Department.findByPk(departmentID);
 
     if (!department) {
       return res.status(404).json({ error: "department not found" });
@@ -280,7 +264,9 @@ async function getUserInfoByID(req, res) {
     }
   } catch (error) {
     console.log(` Couldn't find user: ${error}`);
-    return res.status(500).json({ message: "Internal error during search user" });
+    return res
+      .status(500)
+      .json({ message: "Internal error during search user" });
   }
 }
 
