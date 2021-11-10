@@ -15,7 +15,7 @@ services:
     networks:
       - profiles-network
     volumes:
-      - postgresdb:/var/lib/postgresql/data
+      - postgresdb_profiles:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
