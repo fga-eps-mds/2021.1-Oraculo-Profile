@@ -16,7 +16,7 @@ const corsOptions = {
 const app = express();
 app.disable("x-powered-by");
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan("short"));
 app.use(routes);
