@@ -46,7 +46,8 @@ async function editDepartment(req, res) {
 
 async function getAvailableDepartments(req, res) {
   const departments = await Department.findAll({
-    attributes: ["id", "name"]
+    attributes: ["id", "name"],
+    order: [['name', 'ASC']]
   });
   return res.status(200).json(departments);
 }
