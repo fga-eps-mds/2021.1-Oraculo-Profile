@@ -53,14 +53,18 @@ async function getAvailableDepartments(req, res) {
 }
 
 async function getDepartmentByName(req, res) {
-  const name = req.query.name;
-
   try {
-    if (String(name).length === 0) {
-      return res.status(400).json({ error: "empty or missing parameter 'name'" });
+    // convert query string parameter to lowercase
+    const name = String(req.query.name).toLowerCase();
+
+    if (name == "undefined") {
+      throw new Error("Error");
     }
 
-    name = String(name).toLowerCase();
+    // checks for empty or null query string parameters
+    if (name.length === 0) {
+      return res.status(400).json({ error: "empty or missing parameter 'name'" });
+    }
 
     const department = await Department.findOne({ where: { name } });
     if (!department) {
