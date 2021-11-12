@@ -5,6 +5,7 @@ const jwt = require("./Utils/JWT");
 
 const router = express.Router();
 
+router.get("/department", DepartmentController.getDepartmentByName);
 router.post("/register", jwt.verifyJWT, UserController.createUser);
 router.post("/login", UserController.loginUser);
 router.post("/user/change-password", jwt.verifyJWT, UserController.updatePassword);
