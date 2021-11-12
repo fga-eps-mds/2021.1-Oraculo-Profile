@@ -289,13 +289,12 @@ Resposta esperada:
 }
 ```
 
-
 **Importante** os arrays `departments`, `levels` e `sections` sempre irão conter apenas um objeto.
 
 **GET: `/departments`**
 Envie uma requisição nesse endpoint para obter a lista de departamentos existentes
 
-* Resposta
+- Resposta
 
 ```json
 [
@@ -313,17 +312,17 @@ Envie uma requisição nesse endpoint para obter a lista de departamentos existe
 **GET: `/sections`**
 Envie uma requisição nesse endpoint para obter a lista de seções existentes
 
-* Resposta
+- Resposta
 
 ```json
 [
   {
     "id": 0,
-    "name": "",
+    "name": ""
   },
   {
     "id": 0,
-    "name": "",
+    "name": ""
   }
 ]
 ```
@@ -484,3 +483,11 @@ Edita o nome de um departamento
   "name": ""
 }
 ```
+
+**GET `/department/?name=`**
+
+Busca um departamento pelo nome
+
+- Query string:
+
+  `name`: contém o nome do departamento a ser buscado (case insensitive, URL encoded)
