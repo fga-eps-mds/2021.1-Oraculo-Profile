@@ -47,9 +47,38 @@ async function editDepartment(req, res) {
 async function getAvailableDepartments(req, res) {
   const departments = await Department.findAll({
     attributes: ["id", "name"],
-    order: [['name', 'ASC']]
+    order: [["name", "ASC"]],
   });
   return res.status(200).json(departments);
 }
 
-module.exports = { createDepartment, editDepartment, getAvailableDepartments };
+async function getDepartmentByName(req, res) {
+  const name = req.query.name;
+
+  try {
+    if (String(name).length === 0) {
+      return res.status(400).json({ error: "empty or missing parameter 'name'" });
+    }
+
+    name = String(name).toLowerCase();
+
+    const department = await Department.findOne({ where: { name } });
+    if (!department) {
+      return res.status(404).json({ error: `could not find department ${name}` });
+    }
+
+    return res.status(200).json(department);
+  } catch (err) {
+    console.log(`could not find department: ${err}`);
+    return res
+      .status(500)
+      .json({ error: "internal server error during department search" });
+  }
+}
+
+module.exports = {
+  createDepartment,
+  editDepartment,
+  getAvailableDepartments,
+  getDepartmentByName,
+};
