@@ -27,6 +27,7 @@ jobs:
       - run: yarn run db:up
       - run: yarn run db:migrate
       - run: yarn run db:seeders
+
       - run: yarn run user:create # creates admin user
       - run: yarn test --coverage --outputFile=fga-eps-mds-2021_1-Oraculo-Profile-${{ steps.date.outputs.date }}-test.json --json
 
