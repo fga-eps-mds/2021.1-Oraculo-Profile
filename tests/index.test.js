@@ -442,6 +442,29 @@ describe("Main test", () => {
     const res1 = await request(app).get("/user/1/info").set("x-access-token", token);
     expect(res1.statusCode).toEqual(200);
   });
+
+  it("GET /departments/?name=:name - should search a department by its name", async () => {
+    const departmentName = "inexistente";
+    const res = await request(app).get(`/departments/?name=${departmentName}`);
+    expect(res.statusCode).toEqual(404);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it("GET /department/?name=:name - should not search department (bad request)", async () => {
+    const res = await request(app).get(`department?name=`);
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it("GET /department/?name=:name - should not search department", async () => {
+    const res = await request(app).get("/department/?name");
+    expect(res.statusCode).toEqual(500);
+  });
+
+  it("GET /department/?name=:name - should not search department", async () => {
+    const res = await request(app).get("/department/?name");
+    expect(res.statusCode).toEqual(500);
+  });
 });
 
 afterAll((done) => {
