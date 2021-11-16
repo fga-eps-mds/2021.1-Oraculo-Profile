@@ -1,82 +1,28 @@
 const { User } = require("../src/Model/User");
 const { Department } = require("../src/Model/Department");
 const { Level } = require("../src/Model/Level");
-const { Section } = require("../src/Model/Section");
-const { Sequelize } = require("sequelize");
 const { hashPassword } = require("../src/Utils/hash");
+const { initializeDatabase } = require("../src/Database");
 require("dotenv").config();
 
+const ADMIN_NAME = "Administrador do Sistema";
+const ADMIN_EMAIL = "admin@email.com";
+const ADMIN_PASSWORD = "admin1234";
+
 const adminUser = {
-  name: "administrador do sistema",
-  email: "admin@email.com",
-  password: "admin1234",
+  name: ADMIN_NAME,
+  email: ADMIN_EMAIL,
+  password: ADMIN_PASSWORD,
   departmentID: 1,
   level: 1,
-  sectionID: 2,
 };
-
-function getDatabaseConfig() {
-  const { DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME } = process.env;
-  process.env.DB_HOST = "localhost";
-
-  console.log(`environment: ${DB_HOST},${DB_PASS},${DB_NAME},${DB_PORT},${DB_USER}`);
-
-  const config = {
-    username: `${DB_USER}`,
-    password: `${DB_PASS}`,
-    database: `${DB_NAME}`,
-    port: `${DB_PORT}`,
-    dialect: "postgres",
-    host: `${DB_HOST}`,
-    define: {
-      timestamps: true,
-      underscored: true,
-    },
-    logging: false,
-  };
-
-  console.log(`config: ${JSON.stringify(config)}`);
-
-  return config;
-}
-
-async function setupSequelize(config) {
-  return new Sequelize(config);
-}
-
-async function configure(auth, db) {
-  return new Promise((resolve) => {
-    auth.then(() => {
-      setupModels(db);
-      resolve(0);
-    });
-  });
-}
-
-async function initializeDatabaseWithConfig(cfg) {
-  const db = await setupSequelize(cfg);
-  const auth = db.authenticate();
-  return configure(auth, db);
-}
-
-async function setupModels(db) {
-  User.init(db);
-  Department.init(db);
-  Level.init(db);
-  Section.init(db);
-
-  User.associate(db.models);
-  Department.associate(db.models);
-  Level.associate(db.models);
-  Section.associate(db.models);
-}
 
 async function createAdminUser() {
   try {
-    await initializeDatabaseWithConfig(getDatabaseConfig());
-    console.log("admin user created");
+    await initializeDatabase();
   } catch (err) {
     console.error(`could not connect to database: ${err}`);
+    process.exit(1);
   }
 
   console.log("connected to database");
@@ -89,12 +35,8 @@ async function createAdminUser() {
     where: { id: adminUser.level },
   });
 
-  const section = await Section.findOne({
-    where: { id: adminUser.sectionID },
-  });
-
-  if (!department || !level || !section) {
-    console.error(`invalid information: ${department}, ${level}, ${section}`);
+  if (!department || !level) {
+    console.error(`invalid information: ${department}, ${level}`);
     process.exit(1);
   }
 
@@ -112,24 +54,20 @@ async function createAdminUser() {
 
     await newUser.addDepartment(department);
     await newUser.addLevel(level);
-    await newUser.addSection(section);
 
     console.log(`created user: ${JSON.stringify(newUser)}`);
+    return Promise.resolve();
   } catch (err) {
-    console.log(`could not create user: ${err}`);
+    return Promise.reject(err);
   }
 }
 
-try {
-  createAdminUser().then(
-    () => {
-      process.exit(0);
-    },
-    () => {
-      process.exit(1);
-    }
-  );
-} catch (err) {
-  console.error(`error: ${err}`);
-  process.exit(1);
-}
+createAdminUser().then(
+  () => {
+    process.exit(0);
+  },
+  (rejected) => {
+    console.error(`could not create user: ${rejected}`);
+    process.exit(1);
+  }
+);
