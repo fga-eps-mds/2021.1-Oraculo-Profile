@@ -78,6 +78,11 @@ DB_PORT=8001
 ```bash
 export DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 ```
+3.1 (não obrigatório) - configure o CORS
+
+```bash
+export CORS=http://localhost:3000
+```
 
 **Importante**: os valores das variáveis DB_USER, DB_PASS, DB_HOST, DB_PORT e DB_NAME são os mesmos
 do arquivo `.env` editado anteriormente.
@@ -89,19 +94,19 @@ da seguinte forma:
 export DATABASE_URL=postgres://api_user:api_password@db_users:8001/api_database
 ```
 
-3 - Suba o container
+4 - Suba o container
 
 ```bash
 yarn all:prod
 ```
 
-4 - Edite as credenciais do usuário admin no arquivo `tests/create-admin.js`
+5 - Edite as credenciais do usuário admin no arquivo `tests/create-admin.js`
 
 - ADMIN_MAIL
 - ADMIN_NAME
 - ADMIN_PASSWORD
 
-5 - Crie o usuário admin no banco de dados
+6 - Crie o usuário admin no banco de dados
 
 ```bash
 node tests/create-admin.js
