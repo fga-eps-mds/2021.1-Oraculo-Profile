@@ -7,10 +7,10 @@ const morgan = require("morgan");
 
 env.config();
 
-const { PORT, APP_PORT, TEST } = process.env;
+const { PORT, APP_PORT, CORS } = process.env;
 
 const corsOptions = {
-  origin: "https://oraculo-frontend.herokuapp.com",
+  origin: (CORS === "") ? "http://localhost:3000" : `${CORS}`,
 };
 
 const app = express();
